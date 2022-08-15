@@ -5,6 +5,7 @@ export const GlobalStyle = createGlobalStyle`
 	*::before,
 	*::after {
 		box-sizing: border-box;
+		background-color: #282C34
 	}
 
 	html {
