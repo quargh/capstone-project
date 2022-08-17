@@ -1,3 +1,4 @@
+import {LoadScript, GoogleMap} from '@react-google-maps/api';
 import {nanoid} from 'nanoid';
 import Head from 'next/head';
 import {useState} from 'react';
@@ -6,6 +7,28 @@ import Button from '../components/Button';
 import Layout from '../components/Layout';
 import useFetch from '../hooks/useFetch';
 import useStore from '../hooks/useStore';
+import '../styles.js';
+
+function Map() {
+	return (
+		<div className="App">
+			<LoadScript
+				id="script-loader"
+				googleMapsApiKey="AIzaSyCNReGHN6Uan9yZY4Fjh0DwKN43q--Tya8"
+				language="en"
+				region="us"
+			>
+				<GoogleMap
+					mapContainerClassName="App-map"
+					center={{lat: 52.52047739093263, lng: 13.36653284549709}}
+					zoom={12}
+					version="weekly"
+					on
+				></GoogleMap>
+			</LoadScript>
+		</div>
+	);
+}
 
 export default function HomePage() {
 	// Data
@@ -27,6 +50,7 @@ export default function HomePage() {
 				<meta key="description" name="description" content="This is my project" />
 			</Head>
 			<h1>X-Navigator</h1>
+			<Map />
 			{loading && <div>Loading...</div>}
 			{error && <div>{error.message}</div>}
 			{data && (
