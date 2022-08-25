@@ -1,100 +1,16 @@
-import {LoadScript, GoogleMap} from '@react-google-maps/api';
-import {nanoid} from 'nanoid';
 import Head from 'next/head';
-import {useState} from 'react';
 
-import Button from '../components/Button';
-import Layout from '../components/Layout';
-import useFetch from '../hooks/useFetch';
-import useStore from '../hooks/useStore';
+import GridLayout from '../components/GridLayout';
+
 import '../styles.js';
 
-function Map() {
-	return (
-		<div className="App">
-			<LoadScript
-				id="script-loader"
-				googleMapsApiKey="AIzaSyCNReGHN6Uan9yZY4Fjh0DwKN43q--Tya8"
-				language="en"
-				region="us"
-			>
-				<GoogleMap
-					mapContainerClassName="App-map"
-					center={{lat: 52.52047739093263, lng: 13.36653284549709}}
-					zoom={12}
-					version="weekly"
-					on
-				></GoogleMap>
-			</LoadScript>
-		</div>
-	);
-}
-
 export default function HomePage() {
-	// Data
-	const {data, loading, error} = useFetch('/api/hello');
-
-	// Local state
-	const [id, setId] = useState(null);
-
-	// Global state
-	const counter = useStore(state => state.counter);
-	const decrementCounter = useStore(state => state.decrementCounter);
-	const incrementCounter = useStore(state => state.incrementCounter);
-	const setCounter = useStore(state => state.setCounter);
-
 	return (
-		<Layout>
+		<GridLayout>
 			<Head>
 				<title key="title">My Project</title>
 				<meta key="description" name="description" content="This is my project" />
 			</Head>
-			<h1>X-Navigator</h1>
-			<Map />
-			{loading && <div>Loading...</div>}
-			{error && <div>{error.message}</div>}
-			{data && (
-				<pre>
-					<code>{JSON.stringify(data, null, 4)}</code>
-				</pre>
-			)}
-			<section>
-				<Button
-					aria-label="decrement"
-					onClick={() => {
-						decrementCounter();
-					}}
-				>
-					-
-				</Button>
-				<input
-					value={`${counter}`}
-					size={2}
-					onChange={event => {
-						setCounter(Number.parseInt(event.target.value, 10));
-					}}
-				/>
-				<Button
-					aria-label="increment"
-					onClick={() => {
-						incrementCounter();
-					}}
-				>
-					+
-				</Button>
-			</section>
-			<br />
-			<section>
-				<Button
-					onClick={() => {
-						setId(nanoid());
-					}}
-				>
-					Generate ID
-				</Button>
-				<br />
-				<div>Id: {id}</div>
-			</section>
-		</Layout>
+		</GridLayout>
 	);
 }
