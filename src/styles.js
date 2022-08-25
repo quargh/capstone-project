@@ -72,7 +72,7 @@ export const GlobalStyle = createGlobalStyle`
 
 	.Day {
 		background-color: #dde3e3;
-		color: #444444;
+		color: #444;
 	}
 
 	.TitleParent {

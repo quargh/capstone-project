@@ -1,6 +1,6 @@
 import {useLoadScript, GoogleMap} from '@react-google-maps/api';
-import {useState, useEffect, Fragment} from 'react';
 import React from 'react';
+import {useState, Fragment} from 'react';
 
 import useThemeStore from '../hooks/useThemeStore';
 //import useThemeStorePersist from '../hooks/useThemeStorePersist';
@@ -18,15 +18,7 @@ export default function Map({mapTarget, mapZoom}) {
 
 	// Vars
 	// -Maps Background wird nicht neu gerendert
-	// -Try to fix (Hydration error ?) with useEffect
 	const backgrounds = {dayMode: '#a3c7df', nightMode: '#17263c'};
-	const [background, setBackground] = useState(backgrounds.nightMode);
-
-	useEffect(() => {
-		isNightMode ? setBackground(backgrounds.nightMode) : setBackground(backgrounds.dayMode);
-		console.log('useEffect');
-	}, [isNightMode]);
-	// -Ende Fix, funktioniert aber nicht
 
 	const containerStyle = {
 		width: '100%',
@@ -83,6 +75,7 @@ export default function Map({mapTarget, mapZoom}) {
 	};
 
 
+
 	 */
 
 	const renderMap = () => {
@@ -94,7 +87,9 @@ export default function Map({mapTarget, mapZoom}) {
 							//TODO styles je nach Zustand von switchen: 'isNightMode'
 
 							styles: isNightMode ? NightStyle : DayStyle,
-							backgroundColor: background,
+							backgroundColor: isNightMode
+								? backgrounds.nightMode
+								: backgrounds.dayMode,
 							tilt: 0,
 							zoomControl: true,
 							streetViewControl: false,
