@@ -35,7 +35,7 @@ export default function Map({mapTarget, mapZoom}) {
 			//const z = mapRef.getTilt();
 			//console.log(z);
 		}
-	}, [mapTarget]);
+	}, [mapRef, mapTarget]);
 
 	// Load the Google Maps scripts
 	const {isLoaded} = useLoadScript({
