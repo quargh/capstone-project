@@ -10,11 +10,10 @@ import useThemeStore from '../hooks/useThemeStore';
 //TODO als svg einbinden
 import brightnessDay from '../images/brightness-day.png';
 import brightnessNight from '../images/brightness-night.png';
+//import crossHairsOff from '../images/button_crossHairs_off.png';
+//import crossHairsOn from '../images/button_crossHairs_on.png';
 import closeBox from '../images/close-box.png';
-import crossHairsOff from '../images/MapButtons_2020_off.png';
-//import crossHairsOn from '../images/MapButtons_2020_on.png';
-
-//import Map from './Map';
+import MySVG from '../images/MySVG.jsx';
 
 const Map = dynamic(() => import('./Map'), {
 	ssr: false,
@@ -101,16 +100,21 @@ export default function GridLayout() {
 			</div>
 
 			{/*----------------------------------------------------------*/}
+			{/*- MAP ----------------------------------------------------*/}
+			{/*----------------------------------------------------------*/}
 			<div className={'MapChild'}>
+				{/*----------------------------------------------------------*/}
 				<Map className={'Map'} mapTarget={target} mapZoom={zoom}></Map>
+				{/*----------------------------------------------------------*/}
 				<div className={'CrossHairs'}>
-					<Image
-						src={crossHairsOff}
-						alt={'crossHairsOff'}
-						width={50}
-						height={50}
-						//onClick={event => {}}
-					/>
+					<div className="CrossHairsRelativeParent">
+						<div className={'CrossHairsOff'}>
+							<MySVG variant="crossHairs" size="28px" color="#666" />;
+						</div>
+						<div className={'CrossHairsOn'}>
+							<MySVG variant="crossHairsGPS" size="28px" color="#666" />;
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

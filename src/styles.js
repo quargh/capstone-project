@@ -57,10 +57,33 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	.CrossHairs {
+		width:40px;
+		height:40px;
+		background-color: transparent;
 		position: absolute;
 		z-index: 30;
 		top: 20px;
 		left: 20px;
+	}
+	.CrossHairsRelativeParent{
+		position:relative;
+		width:40px;
+		height:40px;
+		background-color: white;
+		border-radius: 2px;
+	}
+	.CrossHairsOn{
+		position:absolute;
+		top:6px;
+		left:6px;
+		z-index:10;
+	}
+	.CrossHairsOff{
+		position:absolute;
+		top:6px;
+		left:6px;
+		z-index:20;
+
 	}
 
 	.Night {
@@ -80,6 +103,7 @@ export const GlobalStyle = createGlobalStyle`
 		width: 100%;
 		height: 80px;
 	}
+
 
 	.AppTitle {
 		margin-bottom: 12px;

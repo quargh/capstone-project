@@ -1,6 +1,6 @@
 import {useLoadScript, GoogleMap} from '@react-google-maps/api';
 import React from 'react';
-import {useState, Fragment} from 'react';
+import {useState, Fragment, useEffect} from 'react';
 
 import useThemeStore from '../hooks/useThemeStore';
 //import useThemeStorePersist from '../hooks/useThemeStorePersist';
@@ -37,23 +37,26 @@ export default function Map({mapTarget, mapZoom}) {
 		}
 	}, [mapRef, mapTarget]);
 
-	// Load the Google Maps scripts
-	const {isLoaded} = useLoadScript({
-		// Enter your own Google Maps API key
-		googleMapsApiKey: 'AIzaSyCNReGHN6Uan9yZY4Fjh0DwKN43q--Tya8',
-	});
+	useEffect(() => {
+		if (mapRef) {
+			//Damit kannst du pannen
+			mapRef.panTo({lat: 43.53, lng: 3.99});
+		}
+	}, [mapRef]);
 
 	const onLoad = React.useCallback(function callback(map) {
 		//console.log("map reference: ", map)
 		setMapRef(map);
 	}, []);
 
-	React.useEffect(() => {
-		if (mapRef) {
-			//Damit kannst du pannen
-			mapRef.panTo({lat: 43.53, lng: 3.99});
-		}
-	}, [mapRef]);
+	const {isLoaded, loadError} = useLoadScript({
+		// Enter your own Google Maps API key
+
+		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+	});
+	if (loadError) {
+		return 'error loading maps';
+	}
 
 	function handleCenterChanged() {
 		if (mapRef) {
@@ -64,6 +67,7 @@ export default function Map({mapTarget, mapZoom}) {
 			//console.log(mapRef)
 		}
 	}
+
 	/*
 	const loadHandler = map => {
 		// Store a reference to the Google map instance in state
@@ -112,5 +116,6 @@ export default function Map({mapTarget, mapZoom}) {
 			</Fragment>
 		);
 	};
+
 	return isLoaded ? renderMap() : null;
 }
