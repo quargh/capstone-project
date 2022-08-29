@@ -74,10 +74,10 @@ export const GlobalStyle = createGlobalStyle`
 	.CrossHairs {
 		position: absolute;
 		z-index: 30;
-		width: 40px;
-		height: 40px;
 		top: 20px;
 		left: 20px;
+		width: 40px;
+		height: 40px;
 		background-color: white;
 	}
 
