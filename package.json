@@ -11,6 +11,7 @@
     "eslint:fix": "npm run eslint -- --fix",
     "prepare": "npx husky install",
     "stylelint": "npx stylelint src/{**/*,*}.{js,jsx}",
+    "stylelint:fix": "npm run stylelint -- --fix",
     "storybook": "start-storybook -p 6006 -s public",
     "storybook:build": "build-storybook -s public",
     "test:unit": "npm run jest",
@@ -19,8 +20,6 @@
     "toc": "npx markdown-toc@1 README.md -i"
   },
   "dependencies": {
-    "@mui/material": "^5.10.0",
-    "@mui/styled-engine-sc": "^5.10.0",
     "@react-google-maps/api": "^2.12.1",
     "axios": "0.27.2",
     "nanoid": "4.0.0",

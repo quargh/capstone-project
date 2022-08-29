@@ -13,15 +13,22 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	body {
-		margin: 0;
+		margin: 0 0 0 0;
 		background-color: #282C34;
 		font-size: 1rem;
+		//margin-bottom:50px;
 	}
 
-	.App {
+	.GoogleMap {
 		height: 100%;
 		font-family: sans-serif;
 		text-align: center;
+	}
+	.GoogleMap--Day {
+		background-color: #a3c7df;
+	}
+	.GoogleMap--Night {
+		background-color: #17263c;
 	}
 
 	.App-map {
@@ -32,18 +39,17 @@ export const GlobalStyle = createGlobalStyle`
 	.GridContainer {
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 0.1fr 1.7fr;
-		gap: 0 0;
-		height: 100vh;
+		grid-template-rows: 0.05fr 1fr;
+		gap: 0 ;
+		//height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+		height: calc(var(--vh, 1vh) * 100);
 	}
-
 
 	.ActionChild {
 		position: relative;
 		z-index: 20;
 		box-shadow: 0 2px 10px black;
 	}
-
 
 	.MapChild {
 		position: relative;
@@ -54,36 +60,46 @@ export const GlobalStyle = createGlobalStyle`
 		position: absolute;
 		top: 0;
 		left: 0;
+		z-index: 170;
+	}
+
+	.MapControls{
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		z-index: 90;
 	}
 
 	.CrossHairs {
 		width:40px;
 		height:40px;
-		background-color: transparent;
 		position: absolute;
+		background-color: white;
 		z-index: 30;
 		top: 20px;
 		left: 20px;
 	}
+
 	.CrossHairsRelativeParent{
 		position:relative;
 		width:40px;
 		height:40px;
-		background-color: white;
 		border-radius: 2px;
+		background-color: #00000000;
 	}
+
 	.CrossHairsOn{
 		position:absolute;
 		top:6px;
 		left:6px;
 		z-index:10;
 	}
+
 	.CrossHairsOff{
 		position:absolute;
 		top:6px;
 		left:6px;
 		z-index:20;
-
 	}
 
 	.Night {
@@ -104,7 +120,6 @@ export const GlobalStyle = createGlobalStyle`
 		height: 80px;
 	}
 
-
 	.AppTitle {
 		margin-bottom: 12px;
 		margin-left: 25px;
@@ -116,11 +131,15 @@ export const GlobalStyle = createGlobalStyle`
 		position: absolute;
 		top: 28px;
 		right: 25px;
+		cursor: pointer;
 	}
 
 	.closeBox {
 		position: absolute;
 		top: 28px;
 		right: 70px;
+	}
+	.absolute{
+		position:absolute;
 	}
 `;

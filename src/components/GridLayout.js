@@ -1,40 +1,31 @@
-//import '../App.css';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import {useState} from 'react';
 
-//import {Suspense} from 'react';
+import useGPSStore from '../hooks/useGPSStore';
 
-import useThemeStore from '../hooks/useThemeStore';
-//import useThemeStorePersist from '../hooks/useThemeStorePersist';
-//TODO als svg einbinden
-import brightnessDay from '../images/brightness-day.png';
-import brightnessNight from '../images/brightness-night.png';
-//import crossHairsOff from '../images/button_crossHairs_off.png';
-//import crossHairsOn from '../images/button_crossHairs_on.png';
-import closeBox from '../images/close-box.png';
-import MySVG from '../images/MySVG.jsx';
+import ActionBar from './ActionBar';
+import SvgToggle from './Button/SvgToggle';
 
 const Map = dynamic(() => import('./Map'), {
 	ssr: false,
-	suspense: true,
 });
 
 export default function GridLayout() {
-	//const [zoom, setZoom] = useState(8);
 	const zoom = 8;
 	//----
-	const [target, setTarget] = useState({lat: 0, lng: 0});
+	// -Zustand
+	//const userGPS = useGPSStore(state => state.userGPS);
+	const setUserGPS = useGPSStore(state => state.setUserGPS);
+	// -
+	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
+	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
+	// ----
+	// -State
+	const [target, setTarget] = useState({lat: 43.53, lng: 3.99});
 
-	const isNightMode = useThemeStore(state => state.isNightMode);
-	const setIsNightMode = useThemeStore(state => state.setIsNightMode);
-
-	//console.clear();
-	console.log('Grid: ', isNightMode);
-
+	// - LOCATION -------------------------------------------------------------------- >
 	function getLocation() {
 		if (navigator.geolocation) {
-			//alert("navigator.geolocation");
 			navigator.geolocation.getCurrentPosition(success, error);
 		} else {
 			// Geolocation is not supported by this browser
@@ -43,61 +34,40 @@ export default function GridLayout() {
 	}
 
 	function success(position) {
-		//alert("show position");
 		console.log(position.coords.latitude, position.coords.longitude);
+
+		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setTarget({lat: position.coords.latitude, lng: position.coords.longitude});
+		setIsGPSCentered(true);
 	}
 
 	function error(e) {
-		//alert(e.code + " " + e.message)
 		console.warn(`ERROR(${e.code}): ${e.message}`);
-		// - Temp solution for local http server
 		setTarget({lat: 53.56, lng: 9.95});
 	}
 
+	//Pfade im svgObject definieren
+	const crossHairs = {
+		normalState:
+			'M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
+		toggleState:
+			'M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
+	};
+
+	function onHandleGPSClick() {
+		getLocation();
+		console.log('click');
+	}
+
+	// End of LOCATION -----------------------------------------------------------------
+
 	return (
 		<div className={'GridContainer'}>
-			{/* Theme mit Zustand umschalten */}
-			<div className={isNightMode ? 'ActionChild Night' : 'ActionChild Day'}>
-				<div className={'TitleParent'}>
-					{/* Theme mit Zustand umschalten */}
-					<h1 className={isNightMode ? 'AppTitle Night' : 'AppTitle Day'}>X-Navigator</h1>
-				</div>
-				<div className={'Brightness'}>
-					<Image
-						src={isNightMode ? brightnessNight : brightnessDay}
-						alt={'brightness'}
-						width={25}
-						height={25}
-						onClick={() => {
-							//console.log(mapStyle);
-							{
-								/* Zustand switchen */
-							}
-							if (isNightMode) {
-								setIsNightMode(false);
-							} else {
-								setIsNightMode(true);
-							}
-						}}
-					/>
-				</div>
-				<div className={'closeBox'}>
-					<Image
-						src={closeBox}
-						alt={'closeBox'}
-						width={25}
-						height={25}
-						onClick={() => {
-							//console.log(mapStyle);
-							//mapStyle === NightStyle ? setMapStyle(DayStyle) : setMapStyle(NightStyle);
-							//setTarget({lat: 43.53, lng: 7.99});
-							//alert ("click");
-							getLocation();
-						}}
-					/>
-				</div>
-			</div>
+			{/*----------------------------------------------------------*/}
+			{/*- ACTION BAR ---------------------------------------------*/}
+			{/*----------------------------------------------------------*/}
+
+			<ActionBar onPressTest={getLocation} />
 
 			{/*----------------------------------------------------------*/}
 			{/*- MAP ----------------------------------------------------*/}
@@ -106,15 +76,13 @@ export default function GridLayout() {
 				{/*----------------------------------------------------------*/}
 				<Map className={'Map'} mapTarget={target} mapZoom={zoom}></Map>
 				{/*----------------------------------------------------------*/}
-				<div className={'CrossHairs'}>
-					<div className="CrossHairsRelativeParent">
-						<div className={'CrossHairsOff'}>
-							<MySVG variant="crossHairs" size="28px" color="#666" />;
-						</div>
-						<div className={'CrossHairsOn'}>
-							<MySVG variant="crossHairsGPS" size="28px" color="#666" />;
-						</div>
-					</div>
+				<div className={'MapControls'}>
+					<SvgToggle
+						handleClick={onHandleGPSClick}
+						svgObject={crossHairs}
+						size={'24px'}
+						color={'#666666'}
+					/>
 				</div>
 			</div>
 		</div>

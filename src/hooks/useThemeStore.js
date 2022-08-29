@@ -1,10 +1,8 @@
 import create from 'zustand';
-//import {persist} from 'zustand/middleware';
-
 const useThemeStore = create(
 	// implizites return!!
 	set => ({
-		isNightMode: false,
+		isNightMode: true,
 		setIsNightMode: isNightMode => set({isNightMode}),
 	})
 );
