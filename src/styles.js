@@ -58,27 +58,27 @@ export const GlobalStyle = createGlobalStyle`
 
 	.Map {
 		position: absolute;
-		top: 0;
 		z-index: 170;
+		top: 0;
 		left: 0;
 
 	}
 
 	.MapControls {
 		position: absolute;
+		z-index: 90;
 		top: 20px;
 		left: 20px;
-		z-index: 90;
 	}
 
 	.CrossHairs {
 		position: absolute;
+		z-index: 30;
 		width: 40px;
 		height: 40px;
-		z-index: 30;
-		background-color: white;
 		top: 20px;
 		left: 20px;
+		background-color: white;
 	}
 
 	.CrossHairsRelativeParent {
@@ -91,16 +91,15 @@ export const GlobalStyle = createGlobalStyle`
 
 	.CrossHairsOn {
 		position: absolute;
-		top: 6px;
 		z-index: 10;
+		top: 6px;
 		left: 6px;
-
 	}
 
 	.CrossHairsOff {
 		position: absolute;
-		top: 6px;
 		z-index: 20;
+		top: 6px;
 		left: 6px;
 
 	}
