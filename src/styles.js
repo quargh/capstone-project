@@ -16,7 +16,6 @@ export const GlobalStyle = createGlobalStyle`
 		margin: 0 0 0 0;
 		background-color: #282C34;
 		font-size: 1rem;
-		//margin-bottom:50px;
 	}
 
 	.GoogleMap {
@@ -24,9 +23,11 @@ export const GlobalStyle = createGlobalStyle`
 		font-family: sans-serif;
 		text-align: center;
 	}
+
 	.GoogleMap--Day {
 		background-color: #a3c7df;
 	}
+
 	.GoogleMap--Night {
 		background-color: #17263c;
 	}
@@ -40,8 +41,7 @@ export const GlobalStyle = createGlobalStyle`
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 0.05fr 1fr;
-		gap: 0 ;
-		//height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+		gap: 0;
 		height: calc(var(--vh, 1vh) * 100);
 	}
 
@@ -59,11 +59,12 @@ export const GlobalStyle = createGlobalStyle`
 	.Map {
 		position: absolute;
 		top: 0;
-		left: 0;
 		z-index: 170;
+		left: 0;
+
 	}
 
-	.MapControls{
+	.MapControls {
 		position: absolute;
 		top: 20px;
 		left: 20px;
@@ -71,35 +72,37 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	.CrossHairs {
-		width:40px;
-		height:40px;
 		position: absolute;
-		background-color: white;
+		width: 40px;
+		height: 40px;
 		z-index: 30;
+		background-color: white;
 		top: 20px;
 		left: 20px;
 	}
 
-	.CrossHairsRelativeParent{
-		position:relative;
-		width:40px;
-		height:40px;
+	.CrossHairsRelativeParent {
+		position: relative;
+		width: 40px;
+		height: 40px;
 		border-radius: 2px;
-		background-color: #00000000;
+		background-color: #0000;
 	}
 
-	.CrossHairsOn{
-		position:absolute;
-		top:6px;
-		left:6px;
-		z-index:10;
+	.CrossHairsOn {
+		position: absolute;
+		top: 6px;
+		z-index: 10;
+		left: 6px;
+
 	}
 
-	.CrossHairsOff{
-		position:absolute;
-		top:6px;
-		left:6px;
-		z-index:20;
+	.CrossHairsOff {
+		position: absolute;
+		top: 6px;
+		z-index: 20;
+		left: 6px;
+
 	}
 
 	.Night {
@@ -113,7 +116,7 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	.TitleParent {
-		display:  flex;
+		display: flex;
 		align-items: center;
 		justify-content: start;
 		width: 100%;
@@ -139,7 +142,8 @@ export const GlobalStyle = createGlobalStyle`
 		top: 28px;
 		right: 70px;
 	}
-	.absolute{
-		position:absolute;
+
+	.absolute {
+		position: absolute;
 	}
 `;

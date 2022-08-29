@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import {pxToRem} from '../../utils/unit';
 
 const MapButton = styled.button`
-	//top, right, bottom, left
-	//padding: 1.1em 1em 1em 1em;
 	padding: 8px 8px 8px 8px;
 	border: 0 solid rgba(0, 0, 0, 0.3);
 	border-radius: ${pxToRem(1.5)};
