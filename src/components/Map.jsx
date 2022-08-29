@@ -83,7 +83,7 @@ export default function Map({mapTarget, mapZoom}) {
 					onLoad={onLoad}
 					center={center}
 					onDragStart={handleCenterChanged}
-					onDragEnd={handleCenterChanged}
+					//onDragEnd={handleCenterChanged}
 					onZoomChanged={handleCenterChanged}
 					mapContainerStyle={containerStyle}
 					mapContainerClassName="App-map"
