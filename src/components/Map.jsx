@@ -7,7 +7,9 @@ import useThemeStore from '../hooks/useThemeStore';
 import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
 
-export default function Map({mapTarget, mapZoom}) {
+export default function Map() {
+	console.log(GoogleMap);
+
 	// Zustand ---------------------------------------------------->
 
 	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
@@ -19,30 +21,23 @@ export default function Map({mapTarget, mapZoom}) {
 	const mapCenter = useGPSStore(state => state.mapCenter);
 	const setMapCenter = useGPSStore(state => state.setMapCenter);
 	//--
+	const mapZoom = useGPSStore(state => state.mapZoom);
+	const setMapZoom = useGPSStore(state => state.setMapZoom);
+	//--
+	const targetGPS = useGPSStore(state => state.targetGPS);
+	//const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+	//--
 	const isNightMode = useThemeStore(state => state.isNightMode);
-	console.log('Map: ', isNightMode);
 
 	// End of Zustand ----------------------------------------------
 
 	// The things we need to track in state
 	const [mapRef, setMapRef] = useState(null);
-	//const [center, setCenter] = useState({lat: 53.53, lng: 9.99});
-	const center = {lat: 53.53, lng: 9.99};
-	// Vars
-	// -Maps Background colors
-	//const backgrounds = {dayMode: '#a3c7df', nightMode: '#17263c'};
 
 	const containerStyle = {
 		width: '100%',
 		height: '100%',
 	};
-
-	useEffect(() => {
-		if (mapRef) {
-			//setCenter(mapTarget);
-			mapRef.panTo(mapTarget);
-		}
-	}, [mapRef, mapTarget]);
 
 	const onLoad = React.useCallback(function callback(map) {
 		setMapRef(map);
@@ -52,38 +47,62 @@ export default function Map({mapTarget, mapZoom}) {
 		// Enter your own Google Maps API key
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
 	});
-	if (loadError) {
-		return 'error loading maps';
-	}
 
+	//-----------------------------------------------------------------
+	//-----------------------------------------------------------------
+	//-----------------------------------------------------------------
+
+	// Pan to target and use callback to set new MapCenter ------------
+	// Pan by developer
+
+	useEffect(() => {
+		if (mapRef) {
+			mapRef.panTo(targetGPS);
+
+			// eslint-disable-next-line no-undef
+			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
+				setMapCenter(targetGPS);
+				console.log('Funktioniert');
+			});
+		}
+	}, [setMapCenter, mapRef, targetGPS]);
+
+	// End of target --------------------------------------------------
+
+	// Pan by user (drag end) or zoom
 	function handleCenterChanged() {
 		if (mapRef) {
 			setMapCenter(mapRef.getCenter().toJSON());
-			console.log('userGPS: ', userGPS);
-			console.log('mapCenter: ', mapCenter);
-			if (userGPS !== mapCenter) {
+			setMapZoom(mapRef.getZoom());
+			//console.log('userGPS: ', userGPS);
+			console.log('mapCenter: ', JSON.stringify(mapCenter));
+			console.log('userGPS: ', JSON.stringify(userGPS));
+			if (JSON.stringify(mapCenter) !== JSON.stringify(userGPS)) {
 				setIsGPSCentered(false);
 			}
 		}
 	}
 
-	const renderMap = () => {
+	function onStartDrag() {
+		setIsGPSCentered(false);
+	}
+	const RenderMap = () => {
 		return (
 			<div className={`GoogleMap GoogleMap--${isNightMode ? 'Night' : 'Day'}`}>
 				<GoogleMap
 					options={{
 						styles: isNightMode ? NightStyle : DayStyle,
-						backgroundColor: '#00000000',
+						backgroundColor: '#0000',
 						tilt: 0,
-						zoomControl: true,
+						zoomControl: false,
 						streetViewControl: false,
 						disableDefaultUI: true,
 						gestureHandling: 'greedy',
 					}}
 					onLoad={onLoad}
-					center={center}
-					onDragStart={handleCenterChanged}
-					//onDragEnd={handleCenterChanged}
+					center={mapCenter}
+					onDragStart={onStartDrag}
+					onDragEnd={handleCenterChanged}
 					onZoomChanged={handleCenterChanged}
 					mapContainerStyle={containerStyle}
 					mapContainerClassName="App-map"
@@ -96,5 +115,8 @@ export default function Map({mapTarget, mapZoom}) {
 		);
 	};
 
-	return isLoaded ? renderMap() : null;
+	if (loadError) {
+		return <div>Map cannot be loaded right now, sorry.</div>;
+	}
+	return isLoaded ? RenderMap() : <div>Map is loading</div>;
 }

@@ -1,9 +1,11 @@
 import dynamic from 'next/dynamic';
-import {useState} from 'react';
 
 import useGPSStore from '../hooks/useGPSStore';
+import useThemeStore from '../hooks/useThemeStore';
 
 import ActionBar from './ActionBar';
+import ButtonSeparator from './Button/ButtonSeparator';
+import SvgSingle from './Button/SvgSingle';
 import SvgToggle from './Button/SvgToggle';
 
 const Map = dynamic(() => import('./Map'), {
@@ -11,17 +13,27 @@ const Map = dynamic(() => import('./Map'), {
 });
 
 export default function GridLayout() {
-	const zoom = 8;
 	//----
 	// -Zustand
+	// [Keep vars here for later use]
+	const isNightMode = useThemeStore(state => state.isNightMode);
+
 	//const userGPS = useGPSStore(state => state.userGPS);
 	const setUserGPS = useGPSStore(state => state.setUserGPS);
 	// -
 	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
+	// -
+	//const mapCenter = useGPSStore(state => state.mapCenter);
+	//const setMapCenter = useGPSStore(state => state.setMapCenter);
+	// -
+	const mapZoom = useGPSStore(state => state.mapZoom);
+	const setMapZoom = useGPSStore(state => state.setMapZoom);
+	// -
+	//const targetGPS = useGPSStore(state => state.targetGPS);
+	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+
 	// ----
-	// -State
-	const [target, setTarget] = useState({lat: 43.53, lng: 3.99});
 
 	// - LOCATION -------------------------------------------------------------------- >
 	function getLocation() {
@@ -37,21 +49,30 @@ export default function GridLayout() {
 		console.log(position.coords.latitude, position.coords.longitude);
 
 		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-		setTarget({lat: position.coords.latitude, lng: position.coords.longitude});
+		//setMapCenter({lat: position.coords.latitude, lng: position.coords.longitude})
+		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setIsGPSCentered(true);
 	}
 
 	function error(e) {
 		console.warn(`ERROR(${e.code}): ${e.message}`);
-		setTarget({lat: 53.56, lng: 9.95});
+		setTargetGPS({lat: 53.56, lng: 9.95});
 	}
 
-	//Pfade im svgObject definieren
+	// End of LOCATION -----------------------------------------------------------------
+
+	// SVG Pfade Map Buttons definieren
 	const crossHairs = {
 		normalState:
 			'M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
 		toggleState:
 			'M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
+	};
+	const plus = {
+		normalState: 'M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z',
+	};
+	const minus = {
+		normalState: 'M20 14H4V10H20',
 	};
 
 	function onHandleGPSClick() {
@@ -59,7 +80,15 @@ export default function GridLayout() {
 		console.log('click');
 	}
 
-	// End of LOCATION -----------------------------------------------------------------
+	function onHandlePlusClick() {
+		setMapZoom(mapZoom + 1);
+		console.log('plus: ', mapZoom);
+	}
+
+	function onHandleMinusClick() {
+		setMapZoom(mapZoom - 1);
+		console.log('minus', mapZoom);
+	}
 
 	return (
 		<div className={'GridContainer'}>
@@ -67,21 +96,42 @@ export default function GridLayout() {
 			{/*- ACTION BAR ---------------------------------------------*/}
 			{/*----------------------------------------------------------*/}
 
-			<ActionBar onPressTest={getLocation} />
+			<ActionBar />
 
 			{/*----------------------------------------------------------*/}
 			{/*- MAP ----------------------------------------------------*/}
 			{/*----------------------------------------------------------*/}
 			<div className={'MapChild'}>
 				{/*----------------------------------------------------------*/}
-				<Map className={'Map'} mapTarget={target} mapZoom={zoom}></Map>
+				<Map className={'Map'}></Map>
 				{/*----------------------------------------------------------*/}
-				<div className={'MapControls'}>
+				{/*- STYLED MAP CONTROLS ------------------------------------*/}
+				{/*----------------------------------------------------------*/}
+				<div className={'CrossHairs'}>
 					<SvgToggle
 						handleClick={onHandleGPSClick}
 						svgObject={crossHairs}
 						size={'24px'}
-						color={'#666666'}
+						color={isNightMode ? '#666666' : '#ffffff'}
+					/>
+				</div>
+				<div className={'Plus'}>
+					<SvgSingle
+						handleClick={onHandlePlusClick}
+						svgObject={plus}
+						size={'24px'}
+						color={isNightMode ? '#666666' : '#ffffff'}
+					/>
+				</div>
+
+				<ButtonSeparator />
+
+				<div className={'Minus'}>
+					<SvgSingle
+						handleClick={onHandleMinusClick}
+						svgObject={minus}
+						size={'24px'}
+						color={isNightMode ? '#666666' : '#ffffff'}
 					/>
 				</div>
 			</div>

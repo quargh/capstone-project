@@ -9,10 +9,8 @@ export default function ActionBar() {
 	const setIsNightMode = useThemeStore(state => state.setIsNightMode);
 
 	return (
-		// Theme mit Zustand umschalten
 		<div className={isNightMode ? 'ActionChild Night' : 'ActionChild Day'}>
 			<div className={'TitleParent'}>
-				{/* Theme mit Zustand umschalten */}
 				<h1 className={isNightMode ? 'AppTitle Night' : 'AppTitle Day'}>X-Navigator</h1>
 			</div>
 			<div className={'Brightness'}>

@@ -1,6 +1,7 @@
 import {createGlobalStyle} from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
+
 	*,
 	*::before,
 	*::after {
@@ -64,45 +65,6 @@ export const GlobalStyle = createGlobalStyle`
 
 	}
 
-	.MapControls {
-		position: absolute;
-		z-index: 90;
-		top: 20px;
-		left: 20px;
-	}
-
-	.CrossHairs {
-		position: absolute;
-		z-index: 30;
-		top: 20px;
-		left: 20px;
-		width: 40px;
-		height: 40px;
-		background-color: white;
-	}
-
-	.CrossHairsRelativeParent {
-		position: relative;
-		width: 40px;
-		height: 40px;
-		border-radius: 2px;
-		background-color: #0000;
-	}
-
-	.CrossHairsOn {
-		position: absolute;
-		z-index: 10;
-		top: 6px;
-		left: 6px;
-	}
-
-	.CrossHairsOff {
-		position: absolute;
-		z-index: 20;
-		top: 6px;
-		left: 6px;
-
-	}
 
 	.Night {
 		background-color: #38414e;
@@ -136,13 +98,21 @@ export const GlobalStyle = createGlobalStyle`
 		cursor: pointer;
 	}
 
-	.closeBox {
+	.CrossHairs {
 		position: absolute;
-		top: 28px;
-		right: 70px;
+		left: 20px;
+		top: 20px;
 	}
 
-	.absolute {
+	.Plus {
 		position: absolute;
+		bottom: 72px;
+		right: 20px;
+	}
+
+	.Minus {
+		position: absolute;
+		bottom: 32px;
+		right: 20px;
 	}
 `;
