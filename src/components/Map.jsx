@@ -1,4 +1,4 @@
-import {useLoadScript, GoogleMap} from '@react-google-maps/api';
+import {useLoadScript, GoogleMap, Marker} from '@react-google-maps/api';
 import React from 'react';
 import {useState, useEffect} from 'react';
 
@@ -8,8 +8,6 @@ import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
 
 export default function Map() {
-	console.log(GoogleMap);
-
 	// Zustand ---------------------------------------------------->
 
 	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
@@ -42,6 +40,12 @@ export default function Map() {
 	const onLoad = React.useCallback(function callback(map) {
 		setMapRef(map);
 	}, []);
+	/*
+	const onLoad = marker =>{
+
+	}
+
+	 */
 
 	const {isLoaded, loadError} = useLoadScript({
 		// Enter your own Google Maps API key
@@ -86,6 +90,7 @@ export default function Map() {
 	function onStartDrag() {
 		setIsGPSCentered(false);
 	}
+
 	const RenderMap = () => {
 		return (
 			<div className={`GoogleMap GoogleMap--${isNightMode ? 'Night' : 'Day'}`}>
@@ -110,7 +115,9 @@ export default function Map() {
 					zoom={mapZoom}
 					zoomControlOptions={true}
 					version="weekly"
-				></GoogleMap>
+				>
+					<Marker position={userGPS} />
+				</GoogleMap>
 			</div>
 		);
 	};
