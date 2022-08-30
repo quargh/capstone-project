@@ -1,3 +1,4 @@
+/*global google*/
 import {useLoadScript, GoogleMap, Marker} from '@react-google-maps/api';
 import React from 'react';
 import {useState, useEffect} from 'react';
@@ -63,7 +64,6 @@ export default function Map() {
 		if (mapRef) {
 			mapRef.panTo(targetGPS);
 
-			// eslint-disable-next-line no-undef
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
 				setMapCenter(targetGPS);
 				console.log('Funktioniert');
@@ -116,7 +116,17 @@ export default function Map() {
 					zoomControlOptions={true}
 					version="weekly"
 				>
-					<Marker position={userGPS} />
+					<Marker
+						position={userGPS}
+						icon={{
+							path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
+							fillColor: '#00AEEF',
+							fillOpacity: 1,
+							scale: 2.5,
+							strokeWeight: 0,
+							anchor: new google.maps.Point(12, 22),
+						}}
+					/>
 				</GoogleMap>
 			</div>
 		);
