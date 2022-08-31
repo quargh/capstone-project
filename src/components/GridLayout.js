@@ -13,43 +13,24 @@ const Map = dynamic(() => import('./Map'), {
 });
 
 export default function GridLayout() {
-	//----
-	// -Zustand
-	// [Keep vars here for later use]
 	const isNightMode = useThemeStore(state => state.isNightMode);
-
-	//const userGPS = useGPSStore(state => state.userGPS);
 	const setUserGPS = useGPSStore(state => state.setUserGPS);
-	// -
-	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
-	// -
-	//const mapCenter = useGPSStore(state => state.mapCenter);
-	//const setMapCenter = useGPSStore(state => state.setMapCenter);
-	// -
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
-	// -
-	//const targetGPS = useGPSStore(state => state.targetGPS);
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
-
-	// ----
 
 	// - LOCATION -------------------------------------------------------------------- >
 	function getLocation() {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(success, error);
 		} else {
-			// Geolocation is not supported by this browser
 			alert('no geolocation');
 		}
 	}
 
 	function success(position) {
-		console.log(position.coords.latitude, position.coords.longitude);
-
 		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-		//setMapCenter({lat: position.coords.latitude, lng: position.coords.longitude})
 		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setIsGPSCentered(true);
 	}
@@ -61,7 +42,6 @@ export default function GridLayout() {
 
 	// End of LOCATION -----------------------------------------------------------------
 
-	// SVG Pfade Map Buttons definieren
 	const crossHairs = {
 		normalState:
 			'M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
@@ -92,21 +72,9 @@ export default function GridLayout() {
 
 	return (
 		<div className={'GridContainer'}>
-			{/*----------------------------------------------------------*/}
-			{/*- ACTION BAR ---------------------------------------------*/}
-			{/*----------------------------------------------------------*/}
-
 			<ActionBar />
-
-			{/*----------------------------------------------------------*/}
-			{/*- MAP ----------------------------------------------------*/}
-			{/*----------------------------------------------------------*/}
 			<div className={'MapChild'}>
-				{/*----------------------------------------------------------*/}
 				<Map className={'Map'}></Map>
-				{/*----------------------------------------------------------*/}
-				{/*- STYLED MAP CONTROLS ------------------------------------*/}
-				{/*----------------------------------------------------------*/}
 				<div className={'CrossHairs'}>
 					<SvgToggle
 						handleClick={onHandleGPSClick}
@@ -123,9 +91,7 @@ export default function GridLayout() {
 						color={isNightMode ? '#666666' : '#ffffff'}
 					/>
 				</div>
-
 				<ButtonSeparator />
-
 				<div className={'Minus'}>
 					<SvgSingle
 						handleClick={onHandleMinusClick}

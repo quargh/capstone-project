@@ -20,12 +20,7 @@ export default function ActionBar() {
 					width={25}
 					height={25}
 					onClick={() => {
-						// Zustand switchen
-						if (isNightMode) {
-							setIsNightMode(false);
-						} else {
-							setIsNightMode(true);
-						}
+						setIsNightMode(!isNightMode);
 					}}
 				/>
 			</div>

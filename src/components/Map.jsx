@@ -9,28 +9,16 @@ import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
 
 export default function Map() {
-	// Zustand ---------------------------------------------------->
-
-	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
-	//--
 	const userGPS = useGPSStore(state => state.userGPS);
-	//const setUserGPS = useGPSStore(state => state.setUserGPS);
-	//--
+
 	const mapCenter = useGPSStore(state => state.mapCenter);
 	const setMapCenter = useGPSStore(state => state.setMapCenter);
-	//--
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
-	//--
 	const targetGPS = useGPSStore(state => state.targetGPS);
-	//const setTargetGPS = useGPSStore(state => state.setTargetGPS);
-	//--
 	const isNightMode = useThemeStore(state => state.isNightMode);
 
-	// End of Zustand ----------------------------------------------
-
-	// The things we need to track in state
 	const [mapRef, setMapRef] = useState(null);
 
 	const containerStyle = {
@@ -41,21 +29,10 @@ export default function Map() {
 	const onLoad = React.useCallback(function callback(map) {
 		setMapRef(map);
 	}, []);
-	/*
-	const onLoad = marker =>{
-
-	}
-
-	 */
 
 	const {isLoaded, loadError} = useLoadScript({
-		// Enter your own Google Maps API key
 		googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
 	});
-
-	//-----------------------------------------------------------------
-	//-----------------------------------------------------------------
-	//-----------------------------------------------------------------
 
 	// Pan to target and use callback to set new MapCenter ------------
 	// Pan by developer
@@ -78,9 +55,6 @@ export default function Map() {
 		if (mapRef) {
 			setMapCenter(mapRef.getCenter().toJSON());
 			setMapZoom(mapRef.getZoom());
-			//console.log('userGPS: ', userGPS);
-			console.log('mapCenter: ', JSON.stringify(mapCenter));
-			console.log('userGPS: ', JSON.stringify(userGPS));
 			if (JSON.stringify(mapCenter) !== JSON.stringify(userGPS)) {
 				setIsGPSCentered(false);
 			}
