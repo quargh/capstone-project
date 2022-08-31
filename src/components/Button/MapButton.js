@@ -6,7 +6,6 @@ const MapButton = styled.button`
 	padding: 8px 8px 8px 8px;
 	border: 0 solid #444;
 	border-radius: ${pxToRem(1.5)};
-
 	color: #000;
 	font-size: 1em;
 	cursor: pointer;

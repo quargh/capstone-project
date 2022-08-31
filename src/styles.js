@@ -100,19 +100,19 @@ export const GlobalStyle = createGlobalStyle`
 
 	.CrossHairs {
 		position: absolute;
-		left: 20px;
 		top: 20px;
+		left: 20px;
 	}
 
 	.Plus {
 		position: absolute;
-		bottom: 72px;
 		right: 20px;
+		bottom: 72px;
 	}
 
 	.Minus {
 		position: absolute;
-		bottom: 32px;
 		right: 20px;
+		bottom: 32px;
 	}
 `;
