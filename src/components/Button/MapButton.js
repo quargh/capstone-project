@@ -9,7 +9,6 @@ const MapButton = styled.button`
 	color: #000;
 	font-size: 1em;
 	cursor: pointer;
-
 	${({variant}) =>
 		variant === 'night' &&
 		css`
