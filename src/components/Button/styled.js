@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import {pxToRem} from '../../utils/unit';
 
 const StyledButton = styled.button`
-	padding: 0.5em 1em;
-	border: 1px solid rgba(0, 0, 0, 0.3);
-	border-radius: ${pxToRem(4)};
-	background: #fae;
+	padding: 8px 8px 4px 8px;
+	border: 0 solid rgba(0, 0, 0, 0.3);
+	border-radius: ${pxToRem(1.5)};
+	background: #fff;
 	color: #000;
 	font-size: 1em;
 
