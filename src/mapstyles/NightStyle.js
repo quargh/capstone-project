@@ -136,6 +136,14 @@ export const NightStyle = [
 	},
 	{
 		featureType: 'road',
+		stylers: [
+			{
+				visibility: 'on',
+			},
+		],
+	},
+	{
+		featureType: 'road',
 		elementType: 'geometry',
 		stylers: [
 			{
@@ -281,7 +289,7 @@ export const NightStyle = [
 		elementType: 'labels.icon',
 		stylers: [
 			{
-				visibility: 'on',
+				visibility: 'off',
 			},
 		],
 	},

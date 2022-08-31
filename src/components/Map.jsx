@@ -4,6 +4,7 @@ import React from 'react';
 import {useState, useEffect} from 'react';
 
 import useGPSStore from '../hooks/useGPSStore';
+import usePermissionStore from '../hooks/usePermissionStore';
 import useThemeStore from '../hooks/useThemeStore';
 import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
@@ -18,6 +19,7 @@ export default function Map() {
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
 	const targetGPS = useGPSStore(state => state.targetGPS);
 	const isNightMode = useThemeStore(state => state.isNightMode);
+	const permission = usePermissionStore(state => state.permission);
 
 	const [mapRef, setMapRef] = useState(null);
 
@@ -40,10 +42,8 @@ export default function Map() {
 	useEffect(() => {
 		if (mapRef) {
 			mapRef.panTo(targetGPS);
-
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
 				setMapCenter(targetGPS);
-				console.log('Funktioniert');
 			});
 		}
 	}, [setMapCenter, mapRef, targetGPS]);
@@ -53,6 +53,7 @@ export default function Map() {
 	// Pan by user (drag end) or zoom
 	function handleCenterChanged() {
 		if (mapRef) {
+			console.log('handleChange called');
 			setMapCenter(mapRef.getCenter().toJSON());
 			setMapZoom(mapRef.getZoom());
 			if (JSON.stringify(mapCenter) !== JSON.stringify(userGPS)) {
@@ -95,7 +96,7 @@ export default function Map() {
 						icon={{
 							path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
 							fillColor: '#00aeef',
-							fillOpacity: 1,
+							fillOpacity: permission ? 1 : 0,
 							scale: 2.5,
 							strokeWeight: 0,
 							anchor: new google.maps.Point(12, 22),

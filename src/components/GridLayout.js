@@ -1,6 +1,10 @@
 import dynamic from 'next/dynamic';
+//import {useState} from 'react';
+//import items from '../db/hamburg';
+//import {useEffect} from 'react';
 
 import useGPSStore from '../hooks/useGPSStore';
+import usePermissionStore from '../hooks/usePermissionStore';
 import useThemeStore from '../hooks/useThemeStore';
 
 import ActionBar from './ActionBar';
@@ -19,9 +23,13 @@ export default function GridLayout() {
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+	const setPermission = usePermissionStore(state => state.setPermission);
+
+	//const [DbArray, setDbArray] = useState([...items]);
 
 	// - LOCATION -------------------------------------------------------------------- >
 	function getLocation() {
+		console.log('getLocation');
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(success, error);
 		} else {
@@ -30,14 +38,18 @@ export default function GridLayout() {
 	}
 
 	function success(position) {
+		console.log('getLocation: success');
+		setPermission(true);
 		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setIsGPSCentered(true);
 	}
 
 	function error(e) {
+		console.log('error');
+		setPermission(false);
 		console.warn(`ERROR(${e.code}): ${e.message}`);
-		setTargetGPS({lat: 53.56, lng: 9.95});
+		//setTargetGPS({lat: 53.56, lng: 9.95});
 	}
 
 	// End of LOCATION -----------------------------------------------------------------
