@@ -46,6 +46,9 @@ export default function GridLayout() {
 	}
 	function startLocationInterval() {
 		console.log('startLocationInterval');
+		setInterval(() => {
+			console.log('run Interval');
+		}, 5000);
 	}
 
 	function error(e) {
