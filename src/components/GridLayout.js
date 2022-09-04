@@ -37,11 +37,15 @@ export default function GridLayout() {
 		console.log('getLocation: success');
 		if (!permission) {
 			console.log('permission was false');
+			startLocationInterval();
 		}
 		setPermission(true);
 		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setIsGPSCentered(true);
+	}
+	function startLocationInterval() {
+		console.log('startLocationInterval');
 	}
 
 	function error(e) {
