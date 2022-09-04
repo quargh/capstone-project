@@ -35,7 +35,7 @@ export default function GridLayout() {
 
 	function success(position) {
 		console.log('getLocation: success, permission is ' + permission);
-		if (permission !== true) {
+		if (locationInterval !== null) {
 			console.log('permission was false -> run once');
 			startLocationInterval();
 		}
@@ -45,7 +45,7 @@ export default function GridLayout() {
 		setIsGPSCentered(true);
 	}
 
-	let locationInterval;
+	let locationInterval = null;
 
 	function startLocationInterval() {
 		console.log('startLocationInterval');
