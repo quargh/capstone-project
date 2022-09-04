@@ -20,6 +20,7 @@ export default function GridLayout() {
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+	const permission = usePermissionStore(state => state.permission);
 	const setPermission = usePermissionStore(state => state.setPermission);
 
 	// - LOCATION -------------------------------------------------------------------- >
@@ -34,6 +35,9 @@ export default function GridLayout() {
 
 	function success(position) {
 		console.log('getLocation: success');
+		if (!permission) {
+			console.log('permission was false');
+		}
 		setPermission(true);
 		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
