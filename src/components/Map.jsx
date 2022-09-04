@@ -72,7 +72,7 @@ export default function Map() {
 	}
 
 	const [locations, setLocations] = useState([]);
-	const URL = 'http://entwicklung.estefan.de/neuefische/clusterer/json/taxiplaetze.json';
+	const URL = 'https://entwicklung.estefan.de/neuefische/clusterer/json/taxiplaetze.json';
 	const {loading, error, data} = useFetch(URL);
 
 	// using data structure #2:
