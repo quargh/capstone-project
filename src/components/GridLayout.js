@@ -35,7 +35,7 @@ export default function GridLayout() {
 
 	function success(position) {
 		console.log('getLocation: success');
-		if (permission === false) {
+		if (permission !== true) {
 			console.log('permission was false -> run once');
 			startLocationInterval();
 		}
