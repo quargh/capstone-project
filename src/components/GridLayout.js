@@ -44,11 +44,13 @@ export default function GridLayout() {
 		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setIsGPSCentered(true);
 	}
+
 	let locationInterval;
 	function startLocationInterval() {
 		console.log('startLocationInterval');
 		locationInterval = setInterval(() => {
 			console.log('run Interval');
+			getLocation();
 		}, 5000);
 	}
 
