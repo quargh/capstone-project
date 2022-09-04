@@ -23,6 +23,7 @@ export const GlobalStyle = createGlobalStyle`
 		height: 100%;
 		font-family: sans-serif;
 		text-align: center;
+		cursor: crosshair;
 	}
 
 	.GoogleMap--Day {
@@ -36,6 +37,7 @@ export const GlobalStyle = createGlobalStyle`
 	.App-map {
 		width: 100%;
 		height: 100%;
+		cursor: crosshair;
 	}
 
 	.GridContainer {
@@ -62,9 +64,7 @@ export const GlobalStyle = createGlobalStyle`
 		z-index: 170;
 		top: 0;
 		left: 0;
-
 	}
-
 
 	.Night {
 		background-color: #38414e;

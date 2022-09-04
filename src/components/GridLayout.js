@@ -1,7 +1,4 @@
 import dynamic from 'next/dynamic';
-//import {useState} from 'react';
-//import items from '../db/hamburg';
-//import {useEffect} from 'react';
 
 import useGPSStore from '../hooks/useGPSStore';
 import usePermissionStore from '../hooks/usePermissionStore';
@@ -24,8 +21,6 @@ export default function GridLayout() {
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
 	const setPermission = usePermissionStore(state => state.setPermission);
-
-	//const [DbArray, setDbArray] = useState([...items]);
 
 	// - LOCATION -------------------------------------------------------------------- >
 	function getLocation() {
