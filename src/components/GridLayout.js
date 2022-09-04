@@ -44,9 +44,10 @@ export default function GridLayout() {
 		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 		setIsGPSCentered(true);
 	}
+	let locationInterval;
 	function startLocationInterval() {
 		console.log('startLocationInterval');
-		setInterval(() => {
+		locationInterval = setInterval(() => {
 			console.log('run Interval');
 		}, 5000);
 	}
@@ -56,6 +57,7 @@ export default function GridLayout() {
 		setPermission(false);
 		console.warn(`ERROR(${e.code}): ${e.message}`);
 		//setTargetGPS({lat: 53.56, lng: 9.95});
+		clearInterval(locationInterval);
 	}
 
 	// End of LOCATION -----------------------------------------------------------------
