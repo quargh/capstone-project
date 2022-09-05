@@ -66,11 +66,14 @@ export default function Map() {
 			setMapCenter(mapRef.getCenter().toJSON());
 			setMapZoom(mapRef.getZoom());
 
+			/*
 			if (JSON.stringify(mapCenter) !== JSON.stringify(userGPS)) {
 				//User ist nicht im Center
 				setCenterGPS(false);
 				setIsGPSCentered(false);
 			}
+
+			 */
 
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
 				//console.log('idle after drag / zoom: getState: ', useGPSStore.getState().userGPS);

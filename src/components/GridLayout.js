@@ -23,10 +23,10 @@ export default function GridLayout() {
 	const centerGPS = useGPSStore(state => state.centerGPS);
 	const setCenterGPS = useGPSStore(state => state.setCenterGPS);
 	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
-	//const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
+	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
-	//const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
 	const permission = usePermissionStore(state => state.permission);
 	const setPermission = usePermissionStore(state => state.setPermission);
 	//const requestLocation = usePermissionStore(state => state.requestLocation);
@@ -56,8 +56,8 @@ export default function GridLayout() {
 		//console.log("centerGPS is... ", centerGPS)
 
 		if (centerGPS === true) {
-			//**setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-			//**setIsGPSCentered(true);
+			setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
+			setIsGPSCentered(true);
 		}
 	}
 
