@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import {useEffect} from 'react';
 
 import useGPSStore from '../hooks/useGPSStore';
 import usePermissionStore from '../hooks/usePermissionStore';
@@ -14,18 +15,29 @@ const Map = dynamic(() => import('./Map'), {
 });
 
 export default function GridLayout() {
+	console.log('render -----------------------------------------------------------------------');
+
 	const isNightMode = useThemeStore(state => state.isNightMode);
+	//const userGPS = useGPSStore(state => state.userGPS);
 	const setUserGPS = useGPSStore(state => state.setUserGPS);
-	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
+	const centerGPS = useGPSStore(state => state.centerGPS);
+	const setCenterGPS = useGPSStore(state => state.setCenterGPS);
+	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
+	//const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
-	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+	//const setTargetGPS = useGPSStore(state => state.setTargetGPS);
 	const permission = usePermissionStore(state => state.permission);
 	const setPermission = usePermissionStore(state => state.setPermission);
+	//const requestLocation = usePermissionStore(state => state.requestLocation);
+	const setRequestLocation = usePermissionStore(state => state.setRequestLocation);
+
+	//
 
 	// - LOCATION -------------------------------------------------------------------- >
+
 	function getLocation() {
-		console.log('getLocation');
+		console.log('%%%%% run getLocation %%%%%');
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(success, error);
 		} else {
@@ -34,34 +46,28 @@ export default function GridLayout() {
 	}
 
 	function success(position) {
-		console.log('getLocation: success, permission is ' + permission);
-		if (locationInterval === null) {
-			console.log('locationInterval was null -> run once');
-			startLocationInterval();
-		}
 		setPermission(true);
+
+		//console.log('isGPSCentered ? ', isGPSCentered);
+
+		//Das ist die Fehlerursache:
 		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-		setIsGPSCentered(true);
-	}
+		//Ende Fehlerursache
+		//console.log("centerGPS is... ", centerGPS)
 
-	let locationInterval = null;
-	console.log('render');
-
-	function startLocationInterval() {
-		console.log('startLocationInterval');
-		locationInterval = setInterval(() => {
-			console.log('run Interval');
-			getLocation();
-		}, 5000);
+		if (centerGPS === true) {
+			//**setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
+			//**setIsGPSCentered(true);
+		}
 	}
 
 	function error(e) {
-		console.log('error');
 		setPermission(false);
+
+		console.log('error');
+
 		console.warn(`ERROR(${e.code}): ${e.message}`);
 		//setTargetGPS({lat: 53.56, lng: 9.95});
-		clearInterval(locationInterval);
 	}
 
 	// End of LOCATION -----------------------------------------------------------------
@@ -79,9 +85,27 @@ export default function GridLayout() {
 		normalState: 'M20 14H4V10H20',
 	};
 
-	function onHandleGPSClick() {
+	// Interval ------------------------------------------------
+
+	useEffect(() => {
+		console.log('execute USE EFFECT');
+		//if (requestLocation === true) {
 		getLocation();
-		console.log('click');
+		const interval = setInterval(() => {
+			getLocation();
+		}, 10000);
+
+		return () => clearInterval(interval);
+		//}
+	}, [getLocation]);
+
+	// Interval Ende -------------------------------------------
+
+	function onHandleGPSClick() {
+		//getLocation();
+		setCenterGPS(true);
+		setRequestLocation(true);
+		console.log('click, permission is: ', permission);
 	}
 
 	function onHandlePlusClick() {
@@ -93,6 +117,16 @@ export default function GridLayout() {
 		setMapZoom(mapZoom - 1);
 		console.log('minus', mapZoom);
 	}
+
+	/*
+	useEffect(() => {
+		if (requestLocation === true && permission === false) {
+			//console.log('execute getLocation @ useEffect');
+			//callGetLocation();
+		}
+	}, [requestLocation, callGetLocation]);
+
+	 */
 
 	return (
 		<div className={'GridContainer'}>

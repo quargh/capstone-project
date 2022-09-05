@@ -13,9 +13,11 @@ import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
 
 export default function Map() {
+	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
 	const userGPS = useGPSStore(state => state.userGPS);
-
+	//const centerGPS = useGPSStore(state => state.centerGPS);
+	const setCenterGPS = useGPSStore(state => state.setCenterGPS);
 	const mapCenter = useGPSStore(state => state.mapCenter);
 	const setMapCenter = useGPSStore(state => state.setMapCenter);
 	const mapZoom = useGPSStore(state => state.mapZoom);
@@ -48,9 +50,10 @@ export default function Map() {
 			mapRef.panTo(targetGPS);
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
 				setMapCenter(targetGPS);
-				console.log('funktioniert');
+				//console.log('funktioniert');
 			});
 		}
+		//Das hier ist das Problem. Nicht ausführen, wenn drag oder zoom!!!
 	}, [setMapCenter, mapRef, targetGPS]);
 
 	// End of target --------------------------------------------------
@@ -58,16 +61,29 @@ export default function Map() {
 	// Pan by user (drag end) or zoom
 	function handleCenterChanged() {
 		if (mapRef) {
-			console.log('handleChange called');
+			//console.log('handleChange called');
+			//setIsMoving(true);
 			setMapCenter(mapRef.getCenter().toJSON());
 			setMapZoom(mapRef.getZoom());
+
 			if (JSON.stringify(mapCenter) !== JSON.stringify(userGPS)) {
+				//User ist nicht im Center
+				setCenterGPS(false);
 				setIsGPSCentered(false);
 			}
+
+			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
+				//console.log('idle after drag / zoom: getState: ', useGPSStore.getState().userGPS);
+				//setUserGPS (useGPSStore.getState().userGPS);
+				//setIsMoving(false);
+			});
 		}
 	}
 
 	function onStartDrag() {
+		console.log('startDrag: set centerGPS to false');
+		//setIsMoving(true);
+		setCenterGPS(false);
 		setIsGPSCentered(false);
 	}
 
@@ -107,6 +123,7 @@ export default function Map() {
 	}
 
 	const RenderMap = () => {
+		console.log('RENDER MAP');
 		return (
 			<div className={`GoogleMap GoogleMap--${isNightMode ? 'Night' : 'Day'}`}>
 				<GoogleMap

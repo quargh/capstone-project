@@ -1,6 +1,8 @@
 import create from 'zustand';
 
 const useGPSStore = create(set => ({
+	centerGPS: false,
+	setCenterGPS: centerGPS => set({centerGPS}),
 	isGPSCentered: false,
 	setIsGPSCentered: isGPSCentered => set({isGPSCentered}),
 	userGPS: {lat: 0, lng: 0},
