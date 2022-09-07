@@ -13,5 +13,7 @@ const useGPSStore = create(set => ({
 	setMapZoom: mapZoom => set({mapZoom}),
 	targetGPS: {lat: 51.18, lng: 8.4},
 	setTargetGPS: targetGPS => set({targetGPS}),
+	isDragging: false,
+	setIsDragging: isDragging => set(isDragging),
 }));
 export default useGPSStore;

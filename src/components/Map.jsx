@@ -1,8 +1,9 @@
 /*global google*/
-import {useLoadScript, GoogleMap, Marker, MarkerClusterer} from '@react-google-maps/api';
+import {useLoadScript, GoogleMap, Marker, MarkerClusterer, Polyline} from '@react-google-maps/api';
 import React from 'react';
 import {useState, useEffect} from 'react';
 
+import useDistanceStore from '../hooks/useDistanceStore';
 import useFetch from '../hooks/useFetch';
 import useGPSStore from '../hooks/useGPSStore';
 import usePermissionStore from '../hooks/usePermissionStore';
@@ -26,8 +27,12 @@ export default function Map() {
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
 	const isNightMode = useThemeStore(state => state.isNightMode);
 	const permission = usePermissionStore(state => state.permission);
+	//const isDragging = useGPSStore(state => state.isDragging);
+	//const setIsDragging = useGPSStore(state => state.setIsDragging);
+	const setDistance = useDistanceStore(state => state.setDistance);
 
 	const [mapRef, setMapRef] = useState(null);
+	const [routingURL, setRoutingURL] = useState(null);
 
 	const containerStyle = {
 		width: '100%',
@@ -46,48 +51,61 @@ export default function Map() {
 	// Pan by developer
 
 	useEffect(() => {
+		console.log('panTo called...', targetGPS);
 		if (mapRef) {
 			mapRef.panTo(targetGPS);
+
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
-				setMapCenter(targetGPS);
+				setMapCenter(mapRef.getCenter().toJSON());
+				//setTargetGPS(targetGPS);
 				//console.log('funktioniert');
 			});
 		}
 		//Das hier ist das Problem. Nicht ausführen, wenn drag oder zoom!!!
-	}, [setMapCenter, mapRef, targetGPS]);
+	}, [setMapCenter, mapRef, targetGPS, setTargetGPS]);
 
 	// End of target --------------------------------------------------
 
 	// Pan by user (drag end) or zoom
 	function handleCenterChanged() {
 		if (mapRef) {
-			//console.log('handleChange called');
+			console.log('handleCenterChanged');
+			setIsGPSCentered(false);
 			//setIsMoving(true);
 			setMapCenter(mapRef.getCenter().toJSON());
 			setMapZoom(mapRef.getZoom());
-
-			/*
+			//Versuch
+			//setTargetGPS(mapCenter);
 			if (JSON.stringify(mapCenter) !== JSON.stringify(userGPS)) {
 				//User ist nicht im Center
-				setCenterGPS(false);
+				//setCenterGPS(false);
 				setIsGPSCentered(false);
 			}
-
-			 */
 
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
 				//console.log('idle after drag / zoom: getState: ', useGPSStore.getState().userGPS);
 				//setUserGPS (useGPSStore.getState().userGPS);
 				//setIsMoving(false);
+				//Versuch
+				//setCenterGPS(false);
+				console.log('SettingTarget #3');
+				setTargetGPS(mapRef.getCenter().toJSON());
 			});
 		}
 	}
 
 	function onStartDrag() {
-		console.log('startDrag: set centerGPS to false');
+		//console.log('startDrag: set centerGPS to false');
 		//setIsMoving(true);
-		setCenterGPS(false);
+		//setCenterGPS(false);
+		//setIsDragging(true);
 		setIsGPSCentered(false);
+	}
+
+	function onEndDrag() {
+		console.log('EndDrag');
+		//setIsDragging(false);
+		handleCenterChanged();
 	}
 
 	const [locations, setLocations] = useState([]);
@@ -98,7 +116,7 @@ export default function Map() {
 
 	useEffect(() => {
 		if (data !== null) {
-			console.log('db length ? ', data.features.length);
+			//console.log('db length ? ', data.features.length);
 			setLocations(
 				data.features.map(location => {
 					return {
@@ -112,21 +130,96 @@ export default function Map() {
 	}, [loading, error, data]);
 
 	function onClusterMarkerClick(info) {
+		//TODO Das funktioniert zwar, dass daß er nicht centered.
+		// Aber er macht keinen panTo
+		console.log('SettingCenterGPS #4');
+		//TODO Der Wert wird vom im Success Callback komplett ignoriert
+		//setCenterGPS(false);
 		setIsGPSCentered(false);
+		console.log('SettingTarget #4');
 		setTargetGPS(info.latLng.toJSON());
+		//--
+		console.log('OSRM Start: ', userGPS);
+		console.log('OSRM Target: ', info.latLng.toJSON());
+
+		setRoutingURL(
+			'http://zlgbpg3i56wq2jpp.myfritz.net:5000/route/v1/driving/' +
+				userGPS.lng +
+				',' +
+				userGPS.lat +
+				';' +
+				info.latLng.toJSON().lng +
+				',' +
+				info.latLng.toJSON().lat +
+				'?overview=full&geometries=geojson'
+		);
+		console.log(routingURL);
 	}
 
 	function onMeClick(info) {
+		console.log('SettingCenterGPS #5');
+		setCenterGPS(true);
 		setIsGPSCentered(true);
+		console.log('SettingTarget #5');
 		setTargetGPS(info.latLng.toJSON());
 	}
 
-	function onClusterClick(info) {
-		console.log(info.center.toJSON());
+	function onClusterClick() {
+		console.log('SettingCenterGPS #6');
+		setCenterGPS(false);
+		setIsGPSCentered(false);
 	}
 
+	//const [distance, setDistance] = useState();
+	const [routingData, setRoutingData] = useState([]);
+
+	useEffect(() => {
+		console.log('load routing');
+		async function fetchData() {
+			const data = await loadData(routingURL);
+			if (data) {
+				console.log('Distance: ', data.routes[0].distance);
+				setDistance(data.routes[0].distance);
+				console.log('Coordinates: ', data.routes[0].geometry.coordinates);
+				//setRoutingData(data.routes[0].geometry.coordinates);
+				//console.log('length: ', routingData.length);
+				//console.log('routing data: ', routingData);
+				setRoutingData(
+					data.routes[0].geometry.coordinates.map(data => {
+						//console.log('data', data);
+						return {lat: data[1], lng: data[0]};
+					})
+				);
+			}
+		}
+		fetchData();
+
+		async function loadData(mUrl) {
+			//console.log("func");
+			try {
+				const response = await fetch(mUrl);
+				return await response.json();
+			} catch (error) {
+				console.log('an error has occurred');
+			}
+		}
+	}, [routingURL, setDistance]);
+	const polylineOptions = {
+		strokeColor: isNightMode ? '#7bce10' : '#075e55',
+		strokeOpacity: 1,
+		strokeWeight: 7,
+		fillColor: isNightMode ? '#7bce10' : '#075e55',
+		fillOpacity: 1,
+		clickable: false,
+		draggable: false,
+		editable: false,
+		visible: true,
+		radius: 30000,
+		zIndex: 1,
+	};
+
 	const RenderMap = () => {
-		console.log('RENDER MAP');
+		console.log('MAP RENDER');
 		return (
 			<div className={`GoogleMap GoogleMap--${isNightMode ? 'Night' : 'Day'}`}>
 				<GoogleMap
@@ -142,7 +235,7 @@ export default function Map() {
 					onLoad={onLoad}
 					center={mapCenter}
 					onDragStart={onStartDrag}
-					onDragEnd={handleCenterChanged}
+					onDragEnd={onEndDrag}
 					onZoomChanged={handleCenterChanged}
 					mapContainerStyle={containerStyle}
 					mapContainerClassName="App-map"
@@ -193,7 +286,7 @@ export default function Map() {
 										path: 'M19.77,7.23L19.78,7.22L16.06,3.5L15,4.56L17.11,6.67C16.17,7.03 15.5,7.93 15.5,9A2.5,2.5 0 0,0 18,11.5C18.36,11.5 18.69,11.42 19,11.29V18.5A1,1 0 0,1 18,19.5A1,1 0 0,1 17,18.5V14A2,2 0 0,0 15,12H14V5A2,2 0 0,0 12,3H6A2,2 0 0,0 4,5V21H14V13.5H15.5V18.5A2.5,2.5 0 0,0 18,21A2.5,2.5 0 0,0 20.5,18.5V9C20.5,8.31 20.22,7.68 19.77,7.23M18,10A1,1 0 0,1 17,9A1,1 0 0,1 18,8A1,1 0 0,1 19,9A1,1 0 0,1 18,10M8,18V13.5H6L10,6V11H12L8,18Z',
 										fillColor: isNightMode ? '#d3d5d8' : '#075e55',
 										fillOpacity: 1,
-										scale: 1,
+										scale: 1.2,
 										strokeWeight: 0,
 										anchor: new google.maps.Point(12, 22),
 									}}
@@ -204,6 +297,12 @@ export default function Map() {
 							))
 						}
 					</MarkerClusterer>
+
+					<Polyline
+						//onLoad={onLoad}
+						path={routingData}
+						options={polylineOptions}
+					/>
 				</GoogleMap>
 			</div>
 		);

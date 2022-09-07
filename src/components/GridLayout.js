@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
-import {useEffect} from 'react';
+import {memo, useCallback, useEffect} from 'react';
 
+import useDistanceStore from '../hooks/useDistanceStore';
 import useGPSStore from '../hooks/useGPSStore';
 import usePermissionStore from '../hooks/usePermissionStore';
 import useThemeStore from '../hooks/useThemeStore';
@@ -9,16 +10,18 @@ import ActionBar from './ActionBar';
 import ButtonSeparator from './Button/ButtonSeparator';
 import SvgSingle from './Button/SvgSingle';
 import SvgToggle from './Button/SvgToggle';
+import StyledInfoBox from './StyledInfoBox';
+//import Map from './Map';
 
-const Map = dynamic(() => import('./Map'), {
-	ssr: false,
-});
+const Map = memo(
+	dynamic(() => import('./Map'), {
+		ssr: false,
+	})
+);
 
 export default function GridLayout() {
-	console.log('render -----------------------------------------------------------------------');
-
 	const isNightMode = useThemeStore(state => state.isNightMode);
-	//const userGPS = useGPSStore(state => state.userGPS);
+	const userGPS = useGPSStore(state => state.userGPS);
 	const setUserGPS = useGPSStore(state => state.setUserGPS);
 	const centerGPS = useGPSStore(state => state.centerGPS);
 	const setCenterGPS = useGPSStore(state => state.setCenterGPS);
@@ -27,85 +30,88 @@ export default function GridLayout() {
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
-	const permission = usePermissionStore(state => state.permission);
+	//const permission = usePermissionStore(state => state.permission);
 	const setPermission = usePermissionStore(state => state.setPermission);
 	//const requestLocation = usePermissionStore(state => state.requestLocation);
-	const setRequestLocation = usePermissionStore(state => state.setRequestLocation);
+	//const setRequestLocation = usePermissionStore(state => state.setRequestLocation);
+	const distance = useDistanceStore(state => state.distance);
 
 	//
+	console.log('MAIN RENDER ---------------');
 
-	// - LOCATION -------------------------------------------------------------------- >
+	// - GEO LOCATION -------------------------------------------------------------------- >
 
-	function getLocation() {
-		console.log('%%%%% run getLocation %%%%%');
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(success, error);
-		} else {
-			alert('no geolocation');
-		}
-	}
+	const handleGeoLocationSuccess = useCallback(
+		position => {
+			setPermission(true);
 
-	function success(position) {
-		setPermission(true);
+			//console.log('isGPSCentered ? ', isGPSCentered);
 
-		//console.log('isGPSCentered ? ', isGPSCentered);
+			setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 
-		//Das ist die Fehlerursache:
-		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-		//Ende Fehlerursache
-		//console.log("centerGPS is... ", centerGPS)
+			if (centerGPS === true) {
+				console.log('SettingTarget #1');
+				setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
+				setIsGPSCentered(true);
+			}
+		},
+		[centerGPS, setIsGPSCentered, setPermission, setTargetGPS, setUserGPS]
+	);
 
-		if (centerGPS === true) {
-			setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-			setIsGPSCentered(true);
-		}
-	}
+	//function success(position) {}
 
-	function error(e) {
-		setPermission(false);
-
-		console.log('error');
-
-		console.warn(`ERROR(${e.code}): ${e.message}`);
-		//setTargetGPS({lat: 53.56, lng: 9.95});
-	}
-
-	// End of LOCATION -----------------------------------------------------------------
-
-	const crossHairs = {
-		normalState:
-			'M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
-		toggleState:
-			'M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
-	};
-	const plus = {
-		normalState: 'M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z',
-	};
-	const minus = {
-		normalState: 'M20 14H4V10H20',
-	};
-
-	// Interval ------------------------------------------------
+	const handleGeoLocationError = useCallback(
+		error => {
+			setPermission(false);
+			console.log('error');
+			console.warn(`ERROR(${error.code}): ${error.message}`);
+			//setTargetGPS({lat: 53.56, lng: 9.95});
+		},
+		[setPermission]
+	);
+	//function error(e) {}
 
 	useEffect(() => {
-		console.log('execute USE EFFECT');
+		console.log('execute MAIN USE EFFECT');
+
 		//if (requestLocation === true) {
+		function getLocation() {
+			console.log('%%%%% run getLocation %%%%%');
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					handleGeoLocationSuccess,
+					handleGeoLocationError
+				);
+			} else {
+				alert('no geolocation');
+			}
+		}
+
 		getLocation();
+
 		const interval = setInterval(() => {
-			getLocation();
+			//getLocation();
 		}, 10000);
 
 		return () => clearInterval(interval);
-		//}
-	}, [getLocation]);
 
-	// Interval Ende -------------------------------------------
+		//}
+	}, [handleGeoLocationSuccess, handleGeoLocationError]);
+
+	// - End of GEO LOCATION -----------------------------------------------------------------
 
 	function onHandleGPSClick() {
-		//getLocation();
+		//console.log('onHandleGPSClick: ', userGPS);
+
+		//setTargetGPS(userGPS);
+		//setIsGPSCentered(true);
+		console.log('SettingCenterGPS #2');
 		setCenterGPS(true);
-		setRequestLocation(true);
-		console.log('click, permission is: ', permission);
+		setIsGPSCentered(true);
+		console.log('SettingTarget #2');
+		setTargetGPS(userGPS);
+
+		//setRequestLocation(true);
 	}
 
 	function onHandlePlusClick() {
@@ -127,6 +133,19 @@ export default function GridLayout() {
 	}, [requestLocation, callGetLocation]);
 
 	 */
+
+	const crossHairs = {
+		normalState:
+			'M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
+		toggleState:
+			'M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z',
+	};
+	const plus = {
+		normalState: 'M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z',
+	};
+	const minus = {
+		normalState: 'M20 14H4V10H20',
+	};
 
 	return (
 		<div className={'GridContainer'}>
@@ -158,6 +177,9 @@ export default function GridLayout() {
 						color={isNightMode ? '#666666' : '#ffffff'}
 					/>
 				</div>
+				<StyledInfoBox variant={isNightMode ? 'night' : 'day'}>
+					<span>{(distance / 1000).toFixed(2)}</span> km
+				</StyledInfoBox>
 			</div>
 		</div>
 	);
