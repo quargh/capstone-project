@@ -21,10 +21,6 @@ const StyledInfoBox = styled.div`
 			color: white;
 			background: #075e55;
 
-			&:hover {
-				background: #fff;
-			}
-
 			&:active {
 				background: #fff;
 			}
@@ -40,10 +36,6 @@ const StyledInfoBox = styled.div`
 		css`
 			color: #38414e;
 			background: #7bce10;
-
-			&:hover {
-				background: #444;
-			}
 
 			&:active {
 				background: #444;
