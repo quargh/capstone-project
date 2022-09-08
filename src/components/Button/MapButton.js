@@ -18,10 +18,6 @@ const MapButton = styled.button`
 			&:hover {
 				background: #fff;
 			}
-
-			&:active {
-				background: #fff;
-			}
 		`}
 	${({variant}) =>
 		variant === 'day' &&
@@ -30,10 +26,6 @@ const MapButton = styled.button`
 			background: #444444cc;
 
 			&:hover {
-				background: #444;
-			}
-
-			&:active {
 				background: #444;
 			}
 		`}
