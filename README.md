@@ -1,6 +1,6 @@
 # X-NAVIGATOR
 
-This is a template for [Next.js](https://nextjs.org/) with additional tools.
+This is my X-Navigator App. It allows you to load datasets, e.g. electric charging stations as in this example, and cluster them to keep the map clear. Click on any charging station and see the shortest way in order to check, if it is in range of your current battery level as indicated by your electric vehicle. The app provides day and night mode.
 
 <!-- toc -->
 
