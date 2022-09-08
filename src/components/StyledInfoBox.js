@@ -60,10 +60,10 @@ const StyledInfoBox = styled.div`
 		top: -11px;
 		left: 8px;
 		padding: 5px;
-		color: white;
 		background-color: #00aeef00;
-		font-size: 0.6rem;
+		color: white;
 		font-family: sans-serif;
+		font-size: 0.6rem;
 	}
 `;
 
