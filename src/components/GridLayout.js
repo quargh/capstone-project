@@ -1,8 +1,7 @@
 import dynamic from 'next/dynamic';
-//import {useState} from 'react';
-//import items from '../db/hamburg';
-//import {useEffect} from 'react';
+import {memo, useCallback, useEffect} from 'react';
 
+import useDistanceStore from '../hooks/useDistanceStore';
 import useGPSStore from '../hooks/useGPSStore';
 import usePermissionStore from '../hooks/usePermissionStore';
 import useThemeStore from '../hooks/useThemeStore';
@@ -11,48 +10,129 @@ import ActionBar from './ActionBar';
 import ButtonSeparator from './Button/ButtonSeparator';
 import SvgSingle from './Button/SvgSingle';
 import SvgToggle from './Button/SvgToggle';
+import StyledInfoBox from './StyledInfoBox';
+//import Map from './Map';
 
-const Map = dynamic(() => import('./Map'), {
-	ssr: false,
-});
+const Map = memo(
+	dynamic(() => import('./Map'), {
+		ssr: false,
+	})
+);
 
 export default function GridLayout() {
 	const isNightMode = useThemeStore(state => state.isNightMode);
+	const userGPS = useGPSStore(state => state.userGPS);
 	const setUserGPS = useGPSStore(state => state.setUserGPS);
+	const centerGPS = useGPSStore(state => state.centerGPS);
+	const setCenterGPS = useGPSStore(state => state.setCenterGPS);
+	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
 	const mapZoom = useGPSStore(state => state.mapZoom);
 	const setMapZoom = useGPSStore(state => state.setMapZoom);
 	const setTargetGPS = useGPSStore(state => state.setTargetGPS);
+	//const permission = usePermissionStore(state => state.permission);
 	const setPermission = usePermissionStore(state => state.setPermission);
+	//const requestLocation = usePermissionStore(state => state.requestLocation);
+	//const setRequestLocation = usePermissionStore(state => state.setRequestLocation);
+	const distance = useDistanceStore(state => state.distance);
 
-	//const [DbArray, setDbArray] = useState([...items]);
+	//
+	console.log('MAIN RENDER ---------------');
 
-	// - LOCATION -------------------------------------------------------------------- >
-	function getLocation() {
-		console.log('getLocation');
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(success, error);
-		} else {
-			alert('no geolocation');
+	// - GEO LOCATION -------------------------------------------------------------------- >
+
+	const handleGeoLocationSuccess = useCallback(
+		position => {
+			setPermission(true);
+
+			//console.log('isGPSCentered ? ', isGPSCentered);
+
+			setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
+
+			if (centerGPS === true) {
+				console.log('SettingTarget #1');
+				setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
+				setIsGPSCentered(true);
+			}
+		},
+		[centerGPS, setIsGPSCentered, setPermission, setTargetGPS, setUserGPS]
+	);
+
+	//function success(position) {}
+
+	const handleGeoLocationError = useCallback(
+		error => {
+			setPermission(false);
+			console.log('error');
+			console.warn(`ERROR(${error.code}): ${error.message}`);
+			//setTargetGPS({lat: 53.56, lng: 9.95});
+		},
+		[setPermission]
+	);
+	//function error(e) {}
+
+	useEffect(() => {
+		console.log('execute MAIN USE EFFECT');
+
+		//if (requestLocation === true) {
+		function getLocation() {
+			console.log('%%%%% run getLocation %%%%%');
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					handleGeoLocationSuccess,
+					handleGeoLocationError
+				);
+			} else {
+				alert('no geolocation');
+			}
 		}
-	}
 
-	function success(position) {
-		console.log('getLocation: success');
-		setPermission(true);
-		setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
-		setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
+		getLocation();
+
+		const interval = setInterval(() => {
+			//getLocation();
+		}, 10000);
+
+		return () => clearInterval(interval);
+
+		//}
+	}, [handleGeoLocationSuccess, handleGeoLocationError]);
+
+	// - End of GEO LOCATION -----------------------------------------------------------------
+
+	function onHandleGPSClick() {
+		//console.log('onHandleGPSClick: ', userGPS);
+
+		//setTargetGPS(userGPS);
+		//setIsGPSCentered(true);
+		console.log('SettingCenterGPS #2');
+		setCenterGPS(true);
 		setIsGPSCentered(true);
+		console.log('SettingTarget #2');
+		setTargetGPS(userGPS);
+
+		//setRequestLocation(true);
 	}
 
-	function error(e) {
-		console.log('error');
-		setPermission(false);
-		console.warn(`ERROR(${e.code}): ${e.message}`);
-		//setTargetGPS({lat: 53.56, lng: 9.95});
+	function onHandlePlusClick() {
+		setMapZoom(mapZoom + 1);
+		console.log('plus: ', mapZoom);
 	}
 
-	// End of LOCATION -----------------------------------------------------------------
+	function onHandleMinusClick() {
+		setMapZoom(mapZoom - 1);
+		console.log('minus', mapZoom);
+	}
+
+	/*
+	useEffect(() => {
+		if (requestLocation === true && permission === false) {
+			//console.log('execute getLocation @ useEffect');
+			//callGetLocation();
+		}
+	}, [requestLocation, callGetLocation]);
+
+	 */
 
 	const crossHairs = {
 		normalState:
@@ -66,21 +146,6 @@ export default function GridLayout() {
 	const minus = {
 		normalState: 'M20 14H4V10H20',
 	};
-
-	function onHandleGPSClick() {
-		getLocation();
-		console.log('click');
-	}
-
-	function onHandlePlusClick() {
-		setMapZoom(mapZoom + 1);
-		console.log('plus: ', mapZoom);
-	}
-
-	function onHandleMinusClick() {
-		setMapZoom(mapZoom - 1);
-		console.log('minus', mapZoom);
-	}
 
 	return (
 		<div className={'GridContainer'}>
@@ -112,6 +177,9 @@ export default function GridLayout() {
 						color={isNightMode ? '#666666' : '#ffffff'}
 					/>
 				</div>
+				<StyledInfoBox variant={isNightMode ? 'night' : 'day'}>
+					<span>{(distance / 1000).toFixed(2)}</span> km
+				</StyledInfoBox>
 			</div>
 		</div>
 	);
