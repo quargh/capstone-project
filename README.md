@@ -1,4 +1,4 @@
-# Next.js App
+# X-NAVIGATOR
 
 This is a template for [Next.js](https://nextjs.org/) with additional tools.
 
