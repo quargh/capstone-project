@@ -13,19 +13,22 @@ const StyledInfoBox = styled.div`
 	font-family: sans-serif;
 	font-size: 16px;
 	font-weight: bold;
-	text-align: center;
 	line-height: 22px;
+	text-align: center;
 	${({variant}) =>
 		variant === 'day' &&
 		css`
 			color: white;
 			background: #075e55;
+
 			&:hover {
 				background: #fff;
 			}
+
 			&:active {
 				background: #fff;
 			}
+
 			& span {
 				color: white;
 				background-color: #075e55;
@@ -45,6 +48,7 @@ const StyledInfoBox = styled.div`
 			&:active {
 				background: #444;
 			}
+
 			& span {
 				color: #38414e;
 				background-color: #7bce10;
