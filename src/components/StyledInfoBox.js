@@ -8,14 +8,13 @@ const StyledInfoBox = styled.div`
 	height: 40px;
 	padding: 10px 10px;
 	background-color: #38414e;
+	border: 0 solid white;
+	border-radius: 2px;
 	font-family: sans-serif;
 	font-size: 16px;
-	border-radius: 2px;
 	text-align: center;
-	border: 0 solid white;
 	font-weight: bold;
 	line-height: 22px;
-
 	${({variant}) =>
 		variant === 'day' &&
 		css`
@@ -52,14 +51,13 @@ const StyledInfoBox = styled.div`
 				font-weight: bold;
 			}
 		`}
-
 	&::before {
 		position: absolute;
 		top: -11px;
 		left: 8px;
 		padding: 5px;
-		font-size: 0.6rem;
 		background-color: #00aeef00;
+		font-size: 0.6rem;
 		color: white;
 		font-family: sans-serif;
 	}
