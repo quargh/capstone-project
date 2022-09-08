@@ -2,18 +2,6 @@
 
 This is my X-Navigator App. It allows you to load datasets, e.g. electric charging stations as in this example, and cluster them to keep the map clear. Click on any charging station and see the shortest way in order to check, if it is in range of your current battery level as indicated by your electric vehicle. The app provides day and night mode.
 
-<!-- toc -->
-
--   [Tech-Stack](#tech-stack)
--   [Project Setup](#project-setup)
-    -   [Set up Vercel](#set-up-vercel)
-        -   [App](#app)
-        -   [Storybook](#storybook)
--   [Getting started](#getting-started)
--   [Test Driven Development](#test-driven-development)
--   [Commands](#commands)
-
-<!-- tocstop -->
 
 It uses the following tools/libraries:
 
