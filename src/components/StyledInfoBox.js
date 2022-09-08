@@ -7,13 +7,13 @@ const StyledInfoBox = styled.div`
 	width: 150px;
 	height: 40px;
 	padding: 10px 10px;
-	background-color: #38414e;
 	border: 0 solid white;
 	border-radius: 2px;
+	background-color: #38414e;
 	font-family: sans-serif;
 	font-size: 16px;
-	text-align: center;
 	font-weight: bold;
+	text-align: center;
 	line-height: 22px;
 	${({variant}) =>
 		variant === 'day' &&
@@ -56,9 +56,9 @@ const StyledInfoBox = styled.div`
 		top: -11px;
 		left: 8px;
 		padding: 5px;
+		color: white;
 		background-color: #00aeef00;
 		font-size: 0.6rem;
-		color: white;
 		font-family: sans-serif;
 	}
 `;
