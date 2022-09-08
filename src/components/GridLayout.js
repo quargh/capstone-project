@@ -1,3 +1,4 @@
+import {motion} from 'framer-motion';
 import dynamic from 'next/dynamic';
 import {memo, useCallback, useEffect} from 'react';
 
@@ -35,6 +36,7 @@ export default function GridLayout() {
 	//const requestLocation = usePermissionStore(state => state.requestLocation);
 	//const setRequestLocation = usePermissionStore(state => state.setRequestLocation);
 	const distance = useDistanceStore(state => state.distance);
+	const y = useDistanceStore(state => state.y);
 
 	//
 	console.log('MAIN RENDER ---------------');
@@ -49,8 +51,10 @@ export default function GridLayout() {
 
 			setUserGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 
+			console.log('### handleGeoLocationSuccess centerGPS: ', centerGPS);
+
 			if (centerGPS === true) {
-				console.log('SettingTarget #1');
+				//console.log('Set Target #1 centerGPS was', centerGPS);
 				setTargetGPS({lat: position.coords.latitude, lng: position.coords.longitude});
 				setIsGPSCentered(true);
 			}
@@ -72,7 +76,7 @@ export default function GridLayout() {
 	//function error(e) {}
 
 	useEffect(() => {
-		console.log('execute MAIN USE EFFECT');
+		console.log('MAIN USE EFFECT');
 
 		//if (requestLocation === true) {
 		function getLocation() {
@@ -106,6 +110,7 @@ export default function GridLayout() {
 		//setTargetGPS(userGPS);
 		//setIsGPSCentered(true);
 		console.log('SettingCenterGPS #2');
+		console.log('### onHandleGPSClick setCenterGPS to true');
 		setCenterGPS(true);
 		setIsGPSCentered(true);
 		console.log('SettingTarget #2');
@@ -147,6 +152,15 @@ export default function GridLayout() {
 		normalState: 'M20 14H4V10H20',
 	};
 
+	/*
+	const spring = {
+		type: 'spring',
+		stiffness: 50,
+		damping: 50,
+	};
+
+	 */
+
 	return (
 		<div className={'GridContainer'}>
 			<ActionBar />
@@ -177,7 +191,13 @@ export default function GridLayout() {
 						color={isNightMode ? '#666666' : '#ffffff'}
 					/>
 				</div>
-				<StyledInfoBox variant={isNightMode ? 'night' : 'day'}>
+
+				<StyledInfoBox
+					as={motion.div}
+					animate={{y: y}}
+					transition={{type: 'Inertia'}}
+					variant={isNightMode ? 'night' : 'day'}
+				>
 					<span>{(distance / 1000).toFixed(2)}</span> km
 				</StyledInfoBox>
 			</div>

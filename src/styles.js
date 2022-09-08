@@ -115,4 +115,14 @@ export const GlobalStyle = createGlobalStyle`
 		right: 20px;
 		bottom: 32px;
 	}
+	.box {
+		position:absolute;
+		top:0;
+		left:0;
+		width: 200px;
+		height: 200px;
+		border: 3px dotted red;
+		border-radius: 20px;
+		pointer-events: none;
+	}
 `;
