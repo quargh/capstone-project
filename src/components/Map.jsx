@@ -143,7 +143,7 @@ export default function Map() {
 		console.log('OSRM Target: ', info.latLng.toJSON());
 
 		setRoutingURL(
-			'http://zlgbpg3i56wq2jpp.myfritz.net:5000/route/v1/driving/' +
+			process.env.NEXT_PUBLIC_ROUTING_URL +
 				userGPS.lng +
 				',' +
 				userGPS.lat +
