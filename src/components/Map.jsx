@@ -245,25 +245,6 @@ export default function Map() {
 					version="weekly"
 					heading={180}
 				>
-					<Marker
-						position={userGPS}
-						onClick={MapMouseEvent => {
-							onMeClick(MapMouseEvent);
-						}}
-						animation={permission ? google.maps.Animation.DROP : null}
-						icon={{
-							path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
-							fillColor: '#00aeef',
-							visible: !!permission,
-							fillOpacity: 1,
-							scale: 2.5,
-							strokeWeight: 0,
-							anchor: new google.maps.Point(12, 22),
-							animation: 'DROP',
-							label: 'me',
-						}}
-					/>
-
 					<MarkerClusterer
 						averageCenter={true}
 						minimumClusterSize={5}
@@ -277,7 +258,7 @@ export default function Map() {
 						{clusterer =>
 							locations.map((location, index) => (
 								<Marker
-									zIndex={index}
+									zIndex={1000 + index}
 									key={location.key}
 									position={{lat: location.lat, lng: location.lng}}
 									clusterer={clusterer}
@@ -297,6 +278,25 @@ export default function Map() {
 							))
 						}
 					</MarkerClusterer>
+
+					<Marker
+						position={userGPS}
+						onClick={MapMouseEvent => {
+							onMeClick(MapMouseEvent);
+						}}
+						animation={permission ? google.maps.Animation.DROP : null}
+						icon={{
+							path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
+							fillColor: '#00aeef',
+							visible: !!permission,
+							fillOpacity: 1,
+							scale: 2.5,
+							strokeWeight: 0,
+							anchor: new google.maps.Point(12, 22),
+							animation: 'DROP',
+							label: 'me',
+						}}
+					/>
 
 					<Polyline
 						//onLoad={onLoad}
