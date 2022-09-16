@@ -106,6 +106,7 @@ export default function Map({handleGPSClick}) {
 		//setIsMoving(true);
 		//setCenterGPS(false);
 		//setIsDragging(true);
+		handleGPSClick(false);
 		setIsGPSCentered(false);
 	}
 
