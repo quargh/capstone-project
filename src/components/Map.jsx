@@ -13,7 +13,7 @@ import {clusterIconStylesNight} from '../mapstyles/ClusterStyles';
 import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
 
-export default function Map() {
+export default function Map({handleGPSClick}) {
 	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
 	const userGPS = useGPSStore(state => state.userGPS);
@@ -33,6 +33,7 @@ export default function Map() {
 
 	const [mapRef, setMapRef] = useState(null);
 	const [routingURL, setRoutingURL] = useState(null);
+	const setY = useDistanceStore(state => state.setY);
 
 	const containerStyle = {
 		width: '100%',
@@ -51,8 +52,14 @@ export default function Map() {
 	// Pan by developer
 
 	useEffect(() => {
-		console.log('panTo called...', targetGPS);
+		//console.log('### panTo called...', targetGPS);
 		if (mapRef) {
+			// - without animation
+
+			//const cameraOptions = {center: targetGPS, heading: 270, tilt: 30, zoom: 10};
+			//mapRef.moveCamera(cameraOptions);
+
+			// - with animation
 			mapRef.panTo(targetGPS);
 
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
@@ -99,6 +106,7 @@ export default function Map() {
 		//setIsMoving(true);
 		//setCenterGPS(false);
 		//setIsDragging(true);
+		handleGPSClick(false);
 		setIsGPSCentered(false);
 	}
 
@@ -132,15 +140,17 @@ export default function Map() {
 	function onClusterMarkerClick(info) {
 		//TODO Das funktioniert zwar, dass daß er nicht centered.
 		// Aber er macht keinen panTo
-		console.log('SettingCenterGPS #4');
+		console.log('Setting CenterGPS -> false #4');
 		//TODO Der Wert wird vom im Success Callback komplett ignoriert
-		//setCenterGPS(false);
+		console.log('### [WRITE] onClusterMarkerClick setCenterGPS: to false');
+		setCenterGPS(false);
 		setIsGPSCentered(false);
+		handleGPSClick(false);
 		console.log('SettingTarget #4');
 		setTargetGPS(info.latLng.toJSON());
 		//--
-		console.log('OSRM Start: ', userGPS);
-		console.log('OSRM Target: ', info.latLng.toJSON());
+		//console.log('OSRM Start: ', userGPS);
+		//console.log('OSRM Target: ', info.latLng.toJSON());
 
 		setRoutingURL(
 			process.env.NEXT_PUBLIC_ROUTING_URL +
@@ -157,30 +167,35 @@ export default function Map() {
 	}
 
 	function onMeClick(info) {
-		console.log('SettingCenterGPS #5');
+		console.log('### [WRITE] onMeClick setCenterGPS to true');
+		//console.log('### SettingCenterGPS #5');
 		setCenterGPS(true);
 		setIsGPSCentered(true);
+		handleGPSClick(true);
+
 		console.log('SettingTarget #5');
 		setTargetGPS(info.latLng.toJSON());
 	}
 
 	function onClusterClick() {
+		console.log('### onClusterClick setCenterGPS to false');
 		console.log('SettingCenterGPS #6');
 		setCenterGPS(false);
 		setIsGPSCentered(false);
+		handleGPSClick(false);
 	}
 
 	//const [distance, setDistance] = useState();
 	const [routingData, setRoutingData] = useState([]);
 
 	useEffect(() => {
-		console.log('load routing');
+		//console.log('load routing');
 		async function fetchData() {
 			const data = await loadData(routingURL);
 			if (data) {
-				console.log('Distance: ', data.routes[0].distance);
+				//console.log('Distance: ', data.routes[0].distance);
 				setDistance(data.routes[0].distance);
-				console.log('Coordinates: ', data.routes[0].geometry.coordinates);
+				//console.log('Coordinates: ', data.routes[0].geometry.coordinates);
 				//setRoutingData(data.routes[0].geometry.coordinates);
 				//console.log('length: ', routingData.length);
 				//console.log('routing data: ', routingData);
@@ -190,12 +205,13 @@ export default function Map() {
 						return {lat: data[1], lng: data[0]};
 					})
 				);
+				setY(60);
 			}
 		}
 		fetchData();
 
 		async function loadData(mUrl) {
-			//console.log("func");
+			//console.log("func");S
 			try {
 				const response = await fetch(mUrl);
 				return await response.json();
@@ -203,7 +219,7 @@ export default function Map() {
 				console.log('an error has occurred');
 			}
 		}
-	}, [routingURL, setDistance]);
+	}, [setY, routingURL, setDistance]);
 	const polylineOptions = {
 		strokeColor: isNightMode ? '#7bce10' : '#075e55',
 		strokeOpacity: 1,
@@ -219,7 +235,7 @@ export default function Map() {
 	};
 
 	const RenderMap = () => {
-		console.log('MAP RENDER');
+		//console.log('### MAP RENDER');
 		return (
 			<div className={`GoogleMap GoogleMap--${isNightMode ? 'Night' : 'Day'}`}>
 				<GoogleMap
@@ -245,7 +261,27 @@ export default function Map() {
 					version="weekly"
 					heading={180}
 				>
+					<Marker
+						zIndex={-10}
+						position={userGPS}
+						onClick={MapMouseEvent => {
+							onMeClick(MapMouseEvent);
+						}}
+						animation={permission ? google.maps.Animation.DROP : null}
+						icon={{
+							path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
+							fillColor: '#00aeef',
+							visible: !!permission,
+							fillOpacity: 1,
+							scale: 2.5,
+							strokeWeight: 0,
+							anchor: new google.maps.Point(12, 22),
+							animation: 'DROP',
+							label: 'me',
+						}}
+					/>
 					<MarkerClusterer
+						zIndex={10000}
 						averageCenter={true}
 						minimumClusterSize={5}
 						gridSize={60}
@@ -258,7 +294,7 @@ export default function Map() {
 						{clusterer =>
 							locations.map((location, index) => (
 								<Marker
-									zIndex={1000 + index}
+									zIndex={500 + index}
 									key={location.key}
 									position={{lat: location.lat, lng: location.lng}}
 									clusterer={clusterer}
@@ -278,25 +314,6 @@ export default function Map() {
 							))
 						}
 					</MarkerClusterer>
-
-					<Marker
-						position={userGPS}
-						onClick={MapMouseEvent => {
-							onMeClick(MapMouseEvent);
-						}}
-						animation={permission ? google.maps.Animation.DROP : null}
-						icon={{
-							path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
-							fillColor: '#00aeef',
-							visible: !!permission,
-							fillOpacity: 1,
-							scale: 2.5,
-							strokeWeight: 0,
-							anchor: new google.maps.Point(12, 22),
-							animation: 'DROP',
-							label: 'me',
-						}}
-					/>
 
 					<Polyline
 						//onLoad={onLoad}

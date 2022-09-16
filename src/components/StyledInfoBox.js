@@ -2,7 +2,7 @@ import styled, {css} from 'styled-components';
 
 const StyledInfoBox = styled.div`
 	position: absolute;
-	top: 20px;
+	top: -40px;
 	right: 20px;
 	width: 150px;
 	height: 40px;
