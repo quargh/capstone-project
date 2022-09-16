@@ -90,7 +90,7 @@ export default function GridLayout() {
 		getLocation();
 
 		const interval = setInterval(() => {
-			//getLocation();
+			getLocation();
 		}, 5000);
 
 		return () => clearInterval(interval);
