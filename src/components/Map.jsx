@@ -13,7 +13,7 @@ import {clusterIconStylesNight} from '../mapstyles/ClusterStyles';
 import {DayStyle} from '../mapstyles/DayStyle';
 import {NightStyle} from '../mapstyles/NightStyle';
 
-export default function Map() {
+export default function Map({handleGPSClick}) {
 	//const isGPSCentered = useGPSStore(state => state.isGPSCentered);
 	const setIsGPSCentered = useGPSStore(state => state.setIsGPSCentered);
 	const userGPS = useGPSStore(state => state.userGPS);
@@ -52,8 +52,14 @@ export default function Map() {
 	// Pan by developer
 
 	useEffect(() => {
-		console.log('panTo called...', targetGPS);
+		//console.log('### panTo called...', targetGPS);
 		if (mapRef) {
+			// - without animation
+
+			//const cameraOptions = {center: targetGPS, heading: 270, tilt: 30, zoom: 10};
+			//mapRef.moveCamera(cameraOptions);
+
+			// - with animation
 			mapRef.panTo(targetGPS);
 
 			google.maps.event.addListenerOnce(mapRef, 'idle', function () {
@@ -135,9 +141,10 @@ export default function Map() {
 		// Aber er macht keinen panTo
 		console.log('Setting CenterGPS -> false #4');
 		//TODO Der Wert wird vom im Success Callback komplett ignoriert
-		console.log('### onClusterMarkerClick setCenterGPS: to false');
+		console.log('### [WRITE] onClusterMarkerClick setCenterGPS: to false');
 		setCenterGPS(false);
 		setIsGPSCentered(false);
+		handleGPSClick(false);
 		console.log('SettingTarget #4');
 		setTargetGPS(info.latLng.toJSON());
 		//--
@@ -159,10 +166,12 @@ export default function Map() {
 	}
 
 	function onMeClick(info) {
-		console.log('### onMeClick setCenterGPS to true');
-		console.log('### SettingCenterGPS #5');
+		console.log('### [WRITE] onMeClick setCenterGPS to true');
+		//console.log('### SettingCenterGPS #5');
 		setCenterGPS(true);
 		setIsGPSCentered(true);
+		handleGPSClick(true);
+
 		console.log('SettingTarget #5');
 		setTargetGPS(info.latLng.toJSON());
 	}
@@ -172,6 +181,7 @@ export default function Map() {
 		console.log('SettingCenterGPS #6');
 		setCenterGPS(false);
 		setIsGPSCentered(false);
+		handleGPSClick(false);
 	}
 
 	//const [distance, setDistance] = useState();
@@ -224,7 +234,7 @@ export default function Map() {
 	};
 
 	const RenderMap = () => {
-		console.log('### MAP RENDER');
+		//console.log('### MAP RENDER');
 		return (
 			<div className={`GoogleMap GoogleMap--${isNightMode ? 'Night' : 'Day'}`}>
 				<GoogleMap
